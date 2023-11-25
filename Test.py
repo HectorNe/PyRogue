@@ -11,11 +11,13 @@ def menu():
     print("       >>tuto<<       \n\n")
     click = input("  tapez le numéro de votre choix : ")
 
+    #lance la partie
     if click == "1":
         for c in range(6):
             print("\n")
             time.sleep(0.25)
         start()
+    #affiche les crédits
     if click == "2":
         for c in range(6):
             print("\n")
@@ -32,6 +34,7 @@ def menu():
         time.sleep(1)
         print("\n\n\n\n")
         menu()
+    #affiche un 'tutoriel'
     if click == "3":
         for c in range(6):
             print("\n")
@@ -50,7 +53,8 @@ def menu():
 def start():
     """
     la fonction start lance une partie du jeu et... ne renvoie rien
-    """
+    """*
+    #si vous avez besoin d'expliquation pour ça je ne peux rien pour vous
     choose = input("quelle arme voulez vous ? (épée,hache,arc,dague) ")
 
     # définir les armes de départ et le joueur
@@ -240,6 +244,7 @@ def start():
             else:
                 moAt -= activeDef
 
+            #attaque spécial de boss (1 chance sur 5)
             if random.randint(1,5) == 1 and "fire breath" in monster:
                 player["health"] -= 40
                 print("le dragon vous crache un déluge de flamme dessus et vous inflige 40 dégat")
@@ -280,10 +285,11 @@ def start():
 
 
     # ////////////////////////////////////////////////////////////////
-    # en cours de développement (combat contre 2 monstres)
+    #combat contre 2 monstre en même temps
     def fight2(monsterA, monsterB, player, activeWeapon, ):
         while player["health"] > 0 and (monsterA["health"] > 0 or monsterB["health"]):
 
+            #calcul de votre défense
             if "def" in activeWeapon:
                 activeDef = player["def"] + activeWeapon["def"]
             else:
@@ -340,6 +346,7 @@ def start():
                 if player["endurance"] < 5:
                     print("vous n'avez plus assez d'endurance")
                     fight2(monsterA, monsterB, player, activeWeapon)
+                #tester si l'arme fait des attaques de zones
                 if "explode" in activeWeapon:
                     if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
                         plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
@@ -357,6 +364,7 @@ def start():
                     monsterB["health"] -= round(plAt)
                     player["endurance"] -= 5
 
+                #si l'arme ne fait pas d'attaque de zone
                 if "explode" not in activeWeapon:
                     vise = int(input("(ne mettre que le numéro)\nvoulez vous attaquer l'ennemi 1 où 2 ? "))
                     if vise == 1 and monsterA["health"] >= 0 and "explode" not in activeWeapon:
@@ -394,8 +402,9 @@ def start():
                     print("vous avez vaincu !")
                     break
 
-
+            #attaque deux fois le même monstre
             elif action == "double":
+                #test si l'attaque est en zone
                 if "explode" in activeWeapon:
                     if player["endurance"] < 5:
                         print("vous n'avez plus assez d'endurance")
@@ -409,7 +418,7 @@ def start():
                         monsterA["health"] -= round(plAt)
                         monsterB["health"] -= round(plAt)
                     player["endurance"] -= 5
-
+                #si l'attaque n'est pas de zone
                 if "explode" not in activeWeapon:
                     vise = int(input("(ne mettre que le numéro)\nvoulez vous attaquer l'ennemi 1 où 2 ? "))
                     if vise == 1 and monsterA["health"] >= 0 and "explode" not in activeWeapon:
@@ -450,10 +459,11 @@ def start():
                     print("vous avez vaincu !")
                     break
 
-
+            #lancer un sort
             elif action == "sort":
                 launchSp = input("quel sort voulez vous lancer ? (feu,zap,heal) ")
                 print("\n")
+                #sort de boule de feu (zone)
                 if launchSp == "feu":
                     if player["mana"] < spells[launchSp]["cost"]:
                         print("vous n'avez plus assez de mana")
@@ -473,7 +483,7 @@ def start():
                     if player["health"] > player["maxhealth"]:
                         player["health"] = player["maxhealth"]
                     player["mana"] -= spells[launchSp]["cost"]
-
+                #autres sorts (pas de zone)
                 else:
                     vise = int(input("(ne mettre que le numéro)\nvoulez vous attaquer l'ennemi 1 où 2 ? "))
                     if vise == 1 and monsterA["health"] >= 0 and "explode" not in activeWeapon:
@@ -503,7 +513,7 @@ def start():
                 if monsterA["health"] <= 0 and monsterB["health"] <= 0:
                     print("vous avez vaincu !")
                     break
-
+            #action de défense, regeneration et tanker les dégats sont monnaie courante ici...
             elif action == "défense":
                 activeDef = activeDef * 2
                 player["health"] += 5
@@ -516,6 +526,7 @@ def start():
                 if player["mana"] > player["maxmana"]:
                     player["mana"] = player["maxmana"]
 
+            #si vous avez fait une faute, ça recommence le tour
             elif action != "défense" and action != "sort" and action != "double" and action != "puissante" and action != "simple":
                 fight2(monsterA,monsterB, player, activeWeapon)
 
@@ -525,6 +536,7 @@ def start():
                 monsterA["health"] -= 10
                 monsterB["health"] -= 10
 
+            #tester la mort du joueur et attaque des monstres
             if player["health"] <= 0:
                 print("vous êtes mort...")
                 print("vous avez parcouru", c, "salles")
@@ -539,14 +551,17 @@ def start():
             else:
                 moAtB = monsterB["atk"]
 
+            #tester si vous esquivez l'attaque
             if "esquive" in activeWeapon and random.randint(0, 100) <= activeWeapon["esquive"]:
                 print("esquive !")
                 moAtA = 0
 
+            #tester si vous esquivez l'attaque
             if "esquive" in activeWeapon and random.randint(0, 100) <= activeWeapon["esquive"]:
                 print("esquive !")
                 moAtB = 0
 
+            #calcul de défense
             if round(moAtA) < activeDef:
                 moAtA = 0
             else:
@@ -557,6 +572,7 @@ def start():
             else:
                 moAtB -= activeDef
 
+            #attaque des ennemis et test de taunt
             if "taunt" in activeWeapon:
                 if random.randint(0, 99) >= activeWeapon["taunt"] and monsterA["health"] >= 0:
                     print("l'ennemi vous inflige", round(moAtA), "dégats !")
@@ -575,6 +591,7 @@ def start():
                     print("l'ennemi vous inflige", round(moAtB), "dégats !")
                     player["health"] -= round(moAtB)
 
+            #affichages d'état du combat, test de vie du joueur et des monstres
             print("votre vie :", player["health"], "-- vie du monstre 1 :", monsterA["health"], "-- vie du monstre 2 :",
                   monsterB["health"])
             print("mana : ", player["mana"], "endurance : ", player["endurance"])
@@ -595,6 +612,7 @@ def start():
 
     #///////////////////////////////////////////////////////////////////////////////
 
+    #definition des combats de boss et de leurs stats
     def dragBoss(player,activeWeapon):
         monster = {"type": "dragon", "atk": 25, "def": 10, "critL": 10, "critDam": 1.5, "health": 750,"fire breath" : True}
         fight(monster,player,activeWeapon)
@@ -604,6 +622,7 @@ def start():
     #def goblinKing(player,activeWeapon):
 
 
+    #definition du lancement de la rencontre avec le boss (ou autre surprise...)
     def boss(player,activeWeapon):
         event = random.randint(1,100)
         if event <3:
@@ -631,11 +650,13 @@ def start():
 
     #///////////////////////////////////////////////////////////////////////////////
 
+    #boucle de 30 salles puis LE BOSS !
     for c in range(30):
 
 
         eventP = random.randint(0, 9)
 
+        #definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
         monsterList = [{"type": "zombie", "atk": 7, "def": 1, "critL": 10, "critDam": 5, "health": 100},
                        {"type": "squelette", "atk": 5, "def": 2, "critL": 10, "critDam": 1.5, "health": 100},
                        {"type": "zombie ELITE !", "atk": 15, "def": 4, "critL": 15, "critDam": 3, "health": 200},
@@ -652,12 +673,15 @@ def start():
 
         if event == "M":
 
+            #lance un combat contre un ou deux monstre(s) et remplis les paramètres
             monsterSpe = random.randint(0, 10)
             if monsterSpe == 0:
                 monsterA = monsterList[random.randint(0, 3)]
+                #en fait si on affronte 2 monstres identique, ça fait un bug où les deux se prennent les mêmes dégats, du coup cette ligne permet de ne pas avoir le même monstre
                 time.sleep(0.01)
                 monsterB = monsterList[random.randint(0, 3)]
                 while monsterA == monsterB:
+                    #pareil que le commentaire précedent
                     monsterB = monsterList[random.randint(0, 3)]
                 print("quoi ?!", monsterA["type"], "et", monsterB["type"], "vous attaquent")
                 fight2(monsterA, monsterB, player, activeWeapon)
@@ -691,8 +715,11 @@ def start():
                 player["endurance"] += 3
                 print("vos statistiques ont été (un peu) restoré")
 
+        #je crois bien que en l'état cette ligne est inutile ici...
         if player["health"] <= 0:
             break
+
+        #génération et affichage d'une salle de trésor
         if event == "C":
             print("salle de trésor !")
             addG = random.randint(20, 100)
@@ -701,6 +728,7 @@ def start():
             if random.randint(0, 10) <= 2:
                 print("")
 
+        #génération et affichage du magasin
         if event == "S":
             achat = 0
             armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
@@ -719,6 +747,7 @@ def start():
                 print("tapez stop pour sortir")
                 achat = input("que voulez vous acheter")
 
+                #gestion des achats
                 if achat == "A" and player["gold"] >= 100:
                     inv["armList"].append(armeR)
                     player["gold"] -= 100
@@ -765,15 +794,18 @@ def start():
                 else:
                     print("vous n'avez pas assez d'argent")
 
+        #euuuuuuh, je verrai ça plus tard...
         """
         if event == "F":
             print("vous entrez dans une forge isolée")
             time.sleep(0.5)
         """
 
+        #message de fin de tour + affichage de l'inventaire
         cont = input("tapez 'inv' pour acceder à l'inventaire, ou rien pour continuer ")
         if cont == "inv":
             act = 0
+            #affichage et action sur l'inventaire
             while act != "stop":
                 print("vous avez",player["gold"],"gold,",player["health"],"points de vie\n",player["mana"],"mana et",player["endurance"],"points d'endurance")
                 print("vous utilisez :",inv["activeWeapon"]["name"])
@@ -787,11 +819,13 @@ def start():
                 print("vous pensez tout de même pas qu'on va vous donnez les stats caché de l'arme en plus non ?\n")
                 time.sleep(1.25)
                 print("vous avez : ")
+                #affichage des armes (et objet mais faudrait déjà que je les rajoute
                 for i in range(0,len(inv["armList"])):
                     print(inv["armList"][i]["name"])
                 for i in range(0,len(inv["item"])):
                     print(inv["item"][i]["name"])
                 act = input("si vous voulez changer d'arme tapez son nom\npour utiliser un objet, écrivez son nom\nsinon tapez 'stop' ")
+                #équipement d'une arme
                 for i in range(0,len(inv["armList"])):
                     if act == inv["armList"][i]["name"]:
                         inv["armList"].append(activeWeapon)
@@ -802,7 +836,8 @@ def start():
                         print("good")
         input("tapez pour continuer")
         print("\n\n")
+        #si la dernière salle est finie : boss
         if c == 29:
             boss(player,activeWeapon)
-
+#ça c'est le truc qui lance tout...
 menu()
