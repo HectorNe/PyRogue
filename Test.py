@@ -5,8 +5,8 @@ choose = input("quelle arme voulez vous ? (épée,hache,arc,dague) ")
 
 # définir les armes de départ et le joueur
 Startweapon = {"épée" : {"name" : "épée", "dam": 1.5, "critL": 5, "critDam": 1.3, "def": 2}, "hache" : {"name" : "hache", "dam": 2, "critL": 3, "critDam": 1.1}, "arc" : {"name" : "arc", "dam": 1.25, "critL": 10, "critDam": 1.2}, "dague" : {"name" : "dague","dam": 1, "critL": 20, "critDam": 1.3}}
-player = {"gold": 0, "atk": 10, "def": 2, "critL": 10, "critDam": 2, "health": 100, "maxhealth": 100, "endurance": 10,
-          "mana": 50, "maxendurance": 10, "maxmana": 50}
+player = {"gold": 50, "atk": 15, "def": 2, "critL": 10, "critDam": 2, "health": 200, "maxhealth": 200, "endurance": 15,
+          "mana": 50, "maxendurance": 15, "maxmana": 50}
 
 # définir la liste des armes disponible dans le jeu (trié par type d'arme, puis chaque arme dans un dictionnaire)
 weaponList = [[{"name": "fire sword", "dam": 1.5, "critL": 5, "critDam": 1.3, "feu": 10}],
@@ -164,12 +164,13 @@ def fight(monster, player, activeWeapon, ):
 
         # appliquer les dégats de feu de l'arme fire sword
         if action != "sort" and "feu" in activeWeapon:
-            print("le feu inflige 5 dégat à l'adversaire")
-            monster["health"] -= 5
+            print("le feu inflige 10 dégat à l'adversaire")
+            monster["health"] -= 10
 
         # tester si le joueur est mort
         if player["health"] <= 0:
             print("vous êtes mort...")
+            print("vous avez parcouru",c,"salles")
             input("\ntapez entrer pour terminer")
             break
         # tester si il y a un coup critique de la part du monstre
@@ -190,8 +191,8 @@ def fight(monster, player, activeWeapon, ):
             moAt -= activeDef
 
         if random.randint(1,5) == 1 and "fire breath" in monster:
-            player["health"] -= 30
-            print("le dragon vous crache un déluge de flamme dessus et vous inflige 30 dégat")
+            player["health"] -= 40
+            print("le dragon vous crache un déluge de flamme dessus et vous inflige 40 dégat")
 
         else:
             # appliquer le pouvoir taunt de la ice axe
@@ -206,7 +207,11 @@ def fight(monster, player, activeWeapon, ):
         # affichage de fin de tour (vie,stat,etc)
         print("votre vie :", player["health"], "-- vie du monstre 1 :", monster["health"])
         print("mana : ", player["mana"], "endurance : ", player["endurance"])
-
+        
+        if monster["health"] <= 0:
+            print("vous avez vaincu !")
+            break
+        
     # lors de la fin du combat donner des récompenses
     if player["health"] > monster["health"]:
         addG = random.randint(0, 4)
@@ -220,6 +225,7 @@ def fight(monster, player, activeWeapon, ):
             player["gold"] += addG
     else:
         print("vous êtes mort...")
+        print("vous avez parcouru", c, "salles")
         input("\ntapez entrer pour terminer")
 
 
@@ -462,9 +468,16 @@ def fight2(monsterA, monsterB, player, activeWeapon, ):
 
         elif action != "défense" and action != "sort" and action != "double" and action != "puissante" and action != "simple":
             fight2(monsterA,monsterB, player, activeWeapon)
+            
+        # appliquer les dégats de feu de l'arme fire sword
+        if action != "sort" and "feu" in activeWeapon:
+            print("le feu inflige 10 dégat aux adversaires")
+            monsterA["health"] -= 10
+            monsterB["health"] -= 10
 
         if player["health"] <= 0:
             print("vous êtes mort...")
+            print("vous avez parcouru", c, "salles")
             input("\ntapez entrer pour terminer")
             break
         if random.randint(0, 100) <= monsterA["critL"]:
@@ -527,15 +540,16 @@ def fight2(monsterA, monsterB, player, activeWeapon, ):
             player["gold"] += addG
     elif player["health"] <= 0:
         print("vous êtes mort...")
+        print("vous avez parcouru", c, "salles")
         input("\ntapez entrer pour terminer")
 
 #///////////////////////////////////////////////////////////////////////////////
 
 def dragBoss(player,activeWeapon):
-    monster = {"type": "dragon", "atk": 20, "def": 5, "critL": 10, "critDam": 1.5, "health": 500,"fire breath" : True}
+    monster = {"type": "dragon", "atk": 25, "def": 10, "critL": 10, "critDam": 1.5, "health": 750,"fire breath" : True}
     fight(monster,player,activeWeapon)
 def golBoss(player,activeWeapon):
-    monster = {"type": "géant", "atk": 12, "def": 10, "critL": 20, "critDam": 1.2, "health": 200}
+    monster = {"type": "géant", "atk": 20, "def": 5, "critL": 20, "critDam": 1.2, "health": 500}
     fight(monster, player, activeWeapon)
 #def goblinKing(player,activeWeapon):
 
@@ -553,8 +567,10 @@ def boss(player,activeWeapon):
         dragBoss(player,activeWeapon)
     if 3<= event <=100:
         print("la colline sur lequel vous vous trouvez se met à bouger")
+        time.sleep(1)
         print("mais ce n'était pas une colline...")
-        print("un géant vous attaque")
+        time.sleep(0.5)
+        print("un géant vous attaque !")
         golBoss(player,activeWeapon)
     if event == 100:
         print("alors que vous marchez dans la forêt, vous apercevez une lueur")
@@ -567,8 +583,6 @@ def boss(player,activeWeapon):
 
 for c in range(30):
 
-    if c == 29:
-        boss(player,activeWeapon)
 
     eventP = random.randint(0, 9)
 
@@ -577,16 +591,16 @@ for c in range(30):
                    {"type": "zombie ELITE !", "atk": 15, "def": 4, "critL": 15, "critDam": 3, "health": 200},
                    {"type": "loup", "atk": 10, "def": 1, "critL": 10, "critDam": 2, "health": 150}]
 
-    if eventP <= 6:
+    if eventP <= 5:
         event = "M"
-    elif 6 < eventP <= 8:
+    elif 5 < eventP <= 7:
         event = "C"
     else:
         event = "S"
 
     if event == "M":
 
-        monsterSpe = random.randint(0, 1)
+        monsterSpe = random.randint(0, 10)
         if monsterSpe == 0:
             monsterA = monsterList[random.randint(0, 3)]
             time.sleep(0.01)
@@ -595,11 +609,35 @@ for c in range(30):
                 monsterB = monsterList[random.randint(0, 3)]
             print("quoi ?!", monsterA["type"], "et", monsterB["type"], "vous attaquent")
             fight2(monsterA, monsterB, player, activeWeapon)
+            player["health"] += 30
+            if player["health"] > player["maxhealth"]:
+                player["health"] = player["maxhealth"]
+            player["mana"] += 15
+            if player["mana"] > player["maxmana"]:
+                player["mana"] = player["maxmana"]
+            player["endurance"] += 6
+            if player["endurance"] > player["maxendurance"]:
+                player["endurance"] = player["maxendurance"]
+            print("vos statistiques ont été (un peu) restoré")
 
         else:
-            monsterE = monsterList[random.randint(0, 3)]
+            Rmonster = random.randint(1, 10)
+            if Rmonster == 1:
+                Rmonster = 2
+            elif 4 >= Rmonster > 1:
+                Rmonster = 0
+            elif 7 >= Rmonster > 4:
+                Rmonster = 1
+            elif 10 >= Rmonster > 7:
+                Rmonster = 3
+
+            monsterE = monsterList[Rmonster]
             print("un", monsterE["type"], "vous attaque")
             fight(monsterE, player, activeWeapon)
+            player["health"] += 15
+            player["mana"] += 7.5
+            player["endurance"] += 3
+            print("vos statistiques ont été (un peu) restoré")
 
     if player["health"] <= 0:
         break
@@ -662,7 +700,7 @@ for c in range(30):
                 player["gold"] -= 50
 
             elif achat == "D" and player["gold"] >= 75:
-                player["def"] += 1
+                player["def"] += 2
                 player["gold"] -= 75
 
             elif achat == "R" and player["gold"] >= 50:
@@ -674,10 +712,12 @@ for c in range(30):
 
             else:
                 print("vous n'avez pas assez d'argent")
-    cont = input("tapez 'inv' pour acceder à l'inventaire, oui rien pour continuer ")
+                
+    cont = input("tapez 'inv' pour acceder à l'inventaire, ou rien pour continuer ")
     if cont == "inv":
         act = 0
         while act != "stop":
+            print("vous avez",player["gold"],"gold,",player["health"],"points de vie\n",player["mana"],"mana et",player["endurance"],"points d'endurance")
             print("vous utilisez :",inv["activeWeapon"]["name"])
             time.sleep(0.5)
             print("cette arme inflige",inv["activeWeapon"]["dam"])
@@ -703,5 +743,6 @@ for c in range(30):
                 if act == inv["item"][i]["name"]:
                     print("good")
     input("tapez pour continuer")
-
     print("\n\n")
+    if c == 29:
+        boss(player,activeWeapon)
