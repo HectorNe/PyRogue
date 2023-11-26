@@ -13,10 +13,12 @@ def menu():
 
     #lance la partie
     if click == "1":
+        classChoos = ""
         for c in range(6):
             print("\n")
             time.sleep(0.25)
-        start()
+        Pclass = classChoix(classChoos)
+        start(Pclass)
     #affiche les crédits
     if click == "2":
         for c in range(6):
@@ -50,23 +52,49 @@ def menu():
         print("\n\n\n\n")
         menu()
 
-def start():
+def start(Pclass):
     """
     la fonction start lance une partie du jeu et... ne renvoie rien
-    """*
+    """
     #si vous avez besoin d'expliquation pour ça je ne peux rien pour vous
     choose = input("quelle arme voulez vous ? (épée,hache,arc,dague) ")
+    print("\n\n\n\n")
 
     # définir les armes de départ et le joueur
     Startweapon = {"épée" : {"name" : "épée", "dam": 1.5, "critL": 5, "critDam": 1.3, "def": 2}, "hache" : {"name" : "hache", "dam": 2, "critL": 3, "critDam": 1.1}, "arc" : {"name" : "arc", "dam": 1.25, "critL": 10, "critDam": 1.2}, "dague" : {"name" : "dague","dam": 1, "critL": 20, "critDam": 1.3}}
-    player = {"gold": 50, "atk": 15, "def": 2, "critL": 10, "critDam": 2, "health": 200, "maxhealth": 200, "endurance": 15,
+    player = {"gold": 50, "atk": 15,"maxatk" : 15, "def": 2, "critL": 10, "critDam": 2, "health": 200, "maxhealth": 200, "endurance": 15,
               "mana": 50, "maxendurance": 15, "maxmana": 50}
+
+    #définir les bonus de classe
+    if Pclass["comp"] == "M":
+        player["mana"] += 50
+        player["maxmana"] += 50
+    if Pclass["comp"] == "A":
+        player["critL"] += 5
+        player["critDam"] += 0.2
+    if Pclass["comp"] == "T":
+        player["def"] += 3
+        player["maxhealth"] += 50
+        player["health"] += 50
+
 
     # définir la liste des armes disponible dans le jeu (trié par type d'arme, puis chaque arme dans un dictionnaire)
     weaponList = [[{"name": "fire sword", "dam": 1.5, "critL": 5, "critDam": 1.3, "feu": 10}],
                   [{"name": "ice axe", "dam": 2, "critL": 3, "critDam": 1.1, "taunt": 10}],
                   [{"name" : "explosive bow", "dam" : 1.25, "critL" : 10, "critDam" : 1.2, "explode" : True}],
                   [{"name": "shadow dagger", "dam": 1, "critL": 20, "critDam": 1.3,"esquive": 10}]]
+
+    itemsList = [
+                 {"type" : "regenV", "name" : "potion de soin", "regenV" : 50,"mes" : "c'est sucré ! la potion vous soigne 50 PV"},
+                 {"type" : "regenE", "name" : "potion d'endurance", "regenE" : 10, "mes" : "vous vous sentez revigoré ! la potion vous rend 10 d'endurance"},
+                 {"type" : "regenM", "name" : "potion de mana", "regenM" : 50, "mes" : "la magie infuse en vous ! la potion vous rend 50 point de mana"},
+                 {"type" : "regenC", "name" : "potion critique", "regenC" : 0.2, "mes" : "si tranchant ! vous avez plus de chance d'infliger un coup critique"},
+                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 50, "mes" : "ça brille ! vous gagnez 50 Gold"},
+                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 100, "mes" : "quel trésor !! vous gagnez 100 Gold"},
+                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 25, "mes" : "ça brille ! vous gagnez 25 Gold"},
+                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 10, "mes" : "ça brille, un peu ?! vous gagnez 10 Gold"},
+                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 0, "mes" : "euh c'est quoi ça ?! vous gagnez 0 Gold"}
+                 ]
 
     # définir la liste des sorts
     spells = {"feu": {"zone": True, "trueDam": 20, "auto heal": 0, "cost": 15},
@@ -91,6 +119,12 @@ def start():
     def fight(monster, player, activeWeapon, ):
         # lancer une boucle ne se stoppant que si un des deux opposants meurs
         while player["health"] > 0 and monster["health"] > 0:
+
+            if Pclass["comp"] == "B":
+                if player["health"] < player["maxhealth"] and (player["maxhealth"] - player["health"])//10 >= 1:
+                    atkBon = (player["maxhealth"] - player["health"])//10
+                    print("la rage vous insuffle",atkBon,"points de force")
+                    player["atk"] = player["maxatk"] + atkBon
 
             # appliquer les bonus de défense de son arme et les reset
             if "def" in activeWeapon:
@@ -234,7 +268,7 @@ def start():
                 moAt = monster["atk"]
 
             # tester si le joueur esquive (avec la shadow dagger)
-            if "esquive" in activeWeapon and random.randint(0, 100) <= activeWeapon["esquive"]:
+            if ("esquive" in activeWeapon and random.randint(0, 100) <= activeWeapon["esquive"]) or (Pclass["comp"] == "A" and random.randint(0, 100) <= 5):
                 print("esquive !")
                 moAt = 0
 
@@ -255,6 +289,8 @@ def start():
                     if random.randint(0, 99) >= activeWeapon["taunt"]:
                         print("l'ennemi vous inflige", round(moAt), "dégats !")
                         player["health"] -= round(moAt)
+                    else:
+                        print("Taunt ! l'ennemi n'a pas réussi à attaquer")
                 else:
                     print("l'ennemi vous inflige", round(moAt), "dégats !")
                     player["health"] -= round(moAt)
@@ -262,6 +298,8 @@ def start():
             # affichage de fin de tour (vie,stat,etc)
             print("votre vie :", player["health"], "-- vie du monstre 1 :", monster["health"])
             print("mana : ", player["mana"], "endurance : ", player["endurance"])
+            time.sleep(1)
+            print("\n\n")
 
             if monster["health"] <= 0:
                 print("vous avez vaincu !")
@@ -274,6 +312,10 @@ def start():
                 armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
                 inv["armList"].append(armeR)
                 print("vous trouvez ? une arme ! Vous gagnez", armeR["name"])
+            if addG == 1:
+                itemR = itemsList[random.randint(0,len(itemsList)-1)]
+                inv["armList"].append(armeR)
+                print("vous remarquez un objet sur le monstre, vous gagnez", itemR["name"])
             else:
                 addG = random.randint(0, 100)
                 print("vous gagnez", addG, "gold")
@@ -287,7 +329,13 @@ def start():
     # ////////////////////////////////////////////////////////////////
     #combat contre 2 monstre en même temps
     def fight2(monsterA, monsterB, player, activeWeapon, ):
-        while player["health"] > 0 and (monsterA["health"] > 0 or monsterB["health"]):
+        while player["health"] > 0 and (monsterA["health"] > 0 or monsterB["health"] > 0):
+
+            if Pclass["comp"] == "B":
+                if player["health"] < player["maxhealth"] and (player["maxhealth"] - player["health"])//10 >= 1:
+                    atkBon = (player["maxhealth"] - player["health"])//10
+                    print("la rage vous insuffle",atkBon,"points de force")
+                    player["atk"] = player["maxatk"] + atkBon
 
             #calcul de votre défense
             if "def" in activeWeapon:
@@ -486,7 +534,9 @@ def start():
                 #autres sorts (pas de zone)
                 else:
                     vise = int(input("(ne mettre que le numéro)\nvoulez vous attaquer l'ennemi 1 où 2 ? "))
+
                     if vise == 1 and monsterA["health"] >= 0 and "explode" not in activeWeapon:
+                        print("\n")
                         if player["mana"] < spells[launchSp]["cost"]:
                             print("vous n'avez plus assez de mana")
                             fight2(monsterA, monsterB, player, activeWeapon)
@@ -498,7 +548,6 @@ def start():
                         player["mana"] -= spells[launchSp]["cost"]
 
                     if vise == 2 and monsterB["health"] >= 0 and "explode" not in activeWeapon:
-                        launchSp = input("quel sort voulez vous lancer ? (feu,zap,heal) ")
                         print("\n")
                         if player["mana"] < spells[launchSp]["cost"]:
                             print("vous n'avez plus assez de mana")
@@ -542,6 +591,7 @@ def start():
                 print("vous avez parcouru", c, "salles")
                 input("\ntapez entrer pour terminer")
                 break
+
             if random.randint(0, 100) <= monsterA["critL"]:
                 moAtA = monsterA["atk"] * monsterA["critDam"]
             else:
@@ -574,7 +624,7 @@ def start():
 
             #attaque des ennemis et test de taunt
             if "taunt" in activeWeapon:
-                if random.randint(0, 99) >= activeWeapon["taunt"] and monsterA["health"] >= 0:
+                if random.randint(0, 99) >= activeWeapon["taunt"] and monsterA["health"] > 0:
                     print("l'ennemi vous inflige", round(moAtA), "dégats !")
                     player["health"] -= round(moAtA)
             else:
@@ -583,7 +633,7 @@ def start():
                     player["health"] -= round(moAtA)
 
             if "taunt" in activeWeapon:
-                if random.randint(0, 99) >= activeWeapon["taunt"] and monsterB["health"] >= 0:
+                if random.randint(0, 99) >= activeWeapon["taunt"] and monsterB["health"] > 0:
                     print("l'ennemi vous inflige", round(moAtB), "dégats !")
                     player["health"] -= round(moAtB)
             else:
@@ -594,7 +644,9 @@ def start():
             #affichages d'état du combat, test de vie du joueur et des monstres
             print("votre vie :", player["health"], "-- vie du monstre 1 :", monsterA["health"], "-- vie du monstre 2 :",
                   monsterB["health"])
+
             print("mana : ", player["mana"], "endurance : ", player["endurance"])
+
         if (monsterA["health"] <= 0 and monsterB["health"] <= 0) and player["health"] > 0:
             addG = random.randint(0, 4)
             if addG == 0:
@@ -605,6 +657,7 @@ def start():
                 addG = random.randint(0, 100)
                 print("vous gagnez", addG, "gold")
                 player["gold"] += addG
+
         elif player["health"] <= 0:
             print("vous êtes mort...")
             print("vous avez parcouru", c, "salles")
@@ -685,6 +738,7 @@ def start():
                     monsterB = monsterList[random.randint(0, 3)]
                 print("quoi ?!", monsterA["type"], "et", monsterB["type"], "vous attaquent")
                 fight2(monsterA, monsterB, player, activeWeapon)
+                player["atk"] = player["maxatk"]
                 player["health"] += 30
                 if player["health"] > player["maxhealth"]:
                     player["health"] = player["maxhealth"]
@@ -710,9 +764,16 @@ def start():
                 monsterE = monsterList[Rmonster]
                 print("un", monsterE["type"], "vous attaque")
                 fight(monsterE, player, activeWeapon)
+                player["atk"] = player["maxatk"]
                 player["health"] += 15
+                if player["health"] > player["maxhealth"]:
+                    player["health"] = player["maxhealth"]
                 player["mana"] += 7.5
+                if player["mana"] > player["maxmana"]:
+                    player["mana"] = player["maxmana"]
                 player["endurance"] += 3
+                if player["endurance"] > player["maxendurance"]:
+                    player["endurance"] = player["maxendurance"]
                 print("vos statistiques ont été (un peu) restoré")
 
         #je crois bien que en l'état cette ligne est inutile ici...
@@ -731,7 +792,12 @@ def start():
         #génération et affichage du magasin
         if event == "S":
             achat = 0
+            AR = False
+            A = False
+            IR = False
+            I = False
             armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
+            itemR = itemsList[random.randint(0,len(itemsList) - 1)]
             while achat != "stop":
                 print("vous entrez dans le magasin :")
                 print("vous avez", player["gold"], "gold")
@@ -742,15 +808,33 @@ def start():
                 print("mana : 75 G : M")
                 print("augmentation de force : 50 G : S")
                 print("augmentation défense : 75 G : D")
-                print("arme aléatoire : 50 G : R")
-                print("arme :", armeR["name"], "100 G : A")
+                if AR != True:
+                    print("arme aléatoire : 50 G : AR")
+                if A != True:
+                    print("arme :", armeR["name"], "100 G : A")
+                if IR != True:
+                    print("objet aléatoire : 40 G : IR")
+                if I != True:
+                    print("arme :", itemR["name"], "75 G : I")
+                print("")
                 print("tapez stop pour sortir")
-                achat = input("que voulez vous acheter")
+                achat = input("que voulez vous acheter ")
 
                 #gestion des achats
                 if achat == "A" and player["gold"] >= 100:
                     inv["armList"].append(armeR)
                     player["gold"] -= 100
+                    A = True
+
+                elif achat == "IR" and player["gold"] >= 40:
+                    inv["item"].append(itemsList[random.randint(0,len(itemsList) - 1)])
+                    player["gold"] -= 40
+                    IR = True
+
+                elif achat == "I" and player["gold"] >= 75:
+                    inv["item"].append(itemR)
+                    player["gold"] -= 75
+                    I = True
 
                 elif achat == "V" and player["gold"] >= 25:
                     player["health"] += 40
@@ -778,15 +862,17 @@ def start():
 
                 elif achat == "S" and player["gold"] >= 50:
                     player["atk"] += 2
+                    player["maxatk"] += 2
                     player["gold"] -= 50
 
                 elif achat == "D" and player["gold"] >= 75:
                     player["def"] += 2
                     player["gold"] -= 75
 
-                elif achat == "R" and player["gold"] >= 50:
+                elif achat == "AR" and player["gold"] >= 50:
                     inv["armList"].append(weaponList[random.randint(0, len(weaponList) - 1)][0])
                     player["gold"] -= 50
+                    AR = True
 
                 elif achat == "stop":
                     break
@@ -819,7 +905,7 @@ def start():
                 print("vous pensez tout de même pas qu'on va vous donnez les stats caché de l'arme en plus non ?\n")
                 time.sleep(1.25)
                 print("vous avez : ")
-                #affichage des armes (et objet mais faudrait déjà que je les rajoute
+                #affichage des armes (et objet mais faudrait déjà que je les rajoute avant)
                 for i in range(0,len(inv["armList"])):
                     print(inv["armList"][i]["name"])
                 for i in range(0,len(inv["item"])):
@@ -831,13 +917,86 @@ def start():
                         inv["armList"].append(activeWeapon)
                         activeWeapon = inv["armList"].pop(i)
                         inv["activeWeapon"] = activeWeapon
-                for i in range(0,len(inv["item"])-1):
+
+                for i in range(0,len(inv["item"])):
+
                     if act == inv["item"][i]["name"]:
-                        print("good")
+
+                        if inv["item"][i]["type"] == "regenV":
+                            player["health"] += inv["item"][i]["regenV"]
+                            if player["health"] > player["maxhealth"]:
+                                player["health"] = player["maxhealth"]
+                            print(inv["item"][i]["mes"])
+
+                        elif inv["item"][i]["type"] == "regenE":
+                            player["endurance"] += inv["item"][i]["regenE"]
+                            if player["endurance"] > player["maxendurance"]:
+                                player["endurance"] = player["maxendurance"]
+                            print(inv["item"][i]["mes"])
+
+                        elif inv["item"][i]["type"] == "regenM":
+                            player["mana"] +=inv["item"][i]["regenM"]
+                            if player["mana"] > player["maxmana"]:
+                                player["mana"] = player["maxmana"]
+                            print(inv["item"][i]["mes"])
+
+                        elif inv["item"][i]["type"] == "regenC":
+                            player["critL"] += inv["item"][i]["regenC"]
+                            print(inv["item"][i]["mes"])
+
+                        elif inv["item"][i]["type"] == "gainG":
+                            player["gold"] += inv["item"][i]["gainG"]
+                            print(inv["item"][i]["mes"])
+
+                        inv["item"].pop(i)
+                        time.sleep(1)
+                        print("\n\n\n")
+                        break
+
         input("tapez pour continuer")
         print("\n\n")
         #si la dernière salle est finie : boss
         if c == 29:
             boss(player,activeWeapon)
+
+#choix des classes (et application)
+def classChoix(classChoos):
+    classList = [{"name" : "barbare", "desc" : "un fameux guerrier, il gagne de la force quand il est blessé", "comp" : "B"},
+                 {"name" : "assassin", "desc" : "un combattant de l'ombre, certains de ses coup sont dévastateurs", "comp" : "A"},
+                 {"name" : "mage", "desc" : "le magicien du royaume, plus de magie !", "comp" : "M"},
+                 {"name" : "tanker", "desc" : "un chevalier intuable", "comp" : "T"},
+                 #comment ça ont peut pas les choisirs... oui c'est vrai mais ça arrive..
+                 {"name" : "draco-barbare", "desc" : "il poursuit l'héritage draconique", "comp" : "DM"},
+                 {"name" : "draco-assassin", "desc" : "il poursuit l'héritage draconique", "comp" : "DA"},
+                 {"name" : "draco-mage", "desc" : "il poursuit l'héritage draconique", "comp" : "DM"},
+                 {"name" : "draco-tanker", "desc" : "un chevalier intuable", "comp" : "DT"},
+                 {"name" : "???", "desc" : "???", "comp" : "?"}
+                 ]
+    print("classes disponibles : ")
+    time.sleep(0.5)
+    for c in range(0,len(classList)):
+        if classList[c]["name"] != "???" and classList[c]["comp"][0] != "D":
+            print(classList[c]["name"])
+            time.sleep(0.5)
+    Choix = input("choisissez votre classe : ")
+    for c in range(0,len(classList)):
+        if Choix == classList[c]["name"] and Choix != "???":
+            print("un",classList[c]["name"]+",",classList[c]["desc"])
+            Cv = input("validez vous ce choix ? (O/N) ")
+            if Cv == "O":
+                print("\n\n\n\n")
+                classChoos = classList[c]
+            else:
+                print("vous avez dit non...")
+                classChoos = classChoix(classChoos)
+                return classChoos
+        elif Choix == "???":
+            print("mais qu'est-ce que ?")
+    if classChoos != "":
+        return classChoos
+    else:
+        classChoos = classChoix(classChoos)
+        return classChoos
+
 #ça c'est le truc qui lance tout...
 menu()
