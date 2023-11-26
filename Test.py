@@ -62,7 +62,7 @@ def start(Pclass):
 
     # définir les armes de départ et le joueur
     Startweapon = {"épée" : {"name" : "épée", "dam": 1.5, "critL": 5, "critDam": 1.3, "def": 2}, "hache" : {"name" : "hache", "dam": 2, "critL": 3, "critDam": 1.1}, "arc" : {"name" : "arc", "dam": 1.25, "critL": 10, "critDam": 1.2}, "dague" : {"name" : "dague","dam": 1, "critL": 20, "critDam": 1.3}}
-    player = {"gold": 50, "atk": 15,"maxatk" : 15, "def": 2, "critL": 10, "critDam": 2, "health": 200, "maxhealth": 200, "endurance": 15,
+    player = {"gold": 50, "atk": 15,"maxatk" : 15, "def": 10, "critL": 10, "critDam": 2, "health": 200, "maxhealth": 200, "endurance": 15,
               "mana": 50, "maxendurance": 15, "maxmana": 50}
 
     #définir les bonus de classe
@@ -73,7 +73,7 @@ def start(Pclass):
         player["critL"] += 5
         player["critDam"] += 0.2
     if Pclass["comp"] == "T":
-        player["def"] += 3
+        player["def"] += 10
         player["maxhealth"] += 50
         player["health"] += 50
 
@@ -102,7 +102,11 @@ def start(Pclass):
               "heal": {"zone": False, "trueDam": 0, "auto heal": 20, "cost": 25}}
 
     # équiper l'arme choisi par le joueur
-    activeWeapon = Startweapon[choose]
+    if choose in Startweapon:
+        activeWeapon = Startweapon[choose]
+    else:
+        start(Pclass)
+
 
     inv = {"armList" : [], "item" : [], "activeWeapon" : {}}
 
@@ -273,10 +277,10 @@ def start(Pclass):
                 moAt = 0
 
             # appliquer la réduction des dégats par la défense
-            if round(moAt) < activeDef:
-                moAt = 0
-            else:
-                moAt -= activeDef
+            print(moAt)
+            print(activeDef)
+            moAt =  moAt - ((moAt * activeDef)//100)
+            print(moAt)
 
             #attaque spécial de boss (1 chance sur 5)
             if random.randint(1,5) == 1 and "fire breath" in monster:
@@ -612,15 +616,9 @@ def start(Pclass):
                 moAtB = 0
 
             #calcul de défense
-            if round(moAtA) < activeDef:
-                moAtA = 0
-            else:
-                moAtA -= activeDef
+            moAtA =  moAtA - ((moAtA * activeDef)//100)
 
-            if round(moAtB) < activeDef:
-                moAtB = 0
-            else:
-                moAtB -= activeDef
+            moAtB =  moAtB - ((moAtB * activeDef)//100)
 
             #attaque des ennemis et test de taunt
             if "taunt" in activeWeapon:
