@@ -7,3 +7,5 @@
                   correction du bug des objets faisant crash le programme
 
                   ajout de deux sets de monstre alternant au bout de 15 salles
+
+                  correction du bug de la mort avec la fin de combat
