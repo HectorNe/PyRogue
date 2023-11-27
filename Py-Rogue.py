@@ -31,9 +31,11 @@ def menu(vit):
         time.sleep(1*vit)
         print("Développement : Hector.D")
         time.sleep(1*vit)
+        print("Merci à Johann.S pour ses idées")
+        time.sleep(1*vit)
         print("Merci à Pablo.N pour ses idées")
         time.sleep(1*vit)
-        print("ainsi qu'à Oliver.A pour son aide")
+        print("ainsi qu'à Oliver.D pour son aide")
         time.sleep(1.5*vit)
         print("bon jeu, et bonne chance...")
         time.sleep(1*vit)
@@ -114,7 +116,7 @@ def start(Pclass,vit):
                  {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 50, "mes" : "ça brille ! vous gagnez 50 Gold"},
                  {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 100, "mes" : "quel trésor !! vous gagnez 100 Gold"},
                  {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 25, "mes" : "ça brille ! vous gagnez 25 Gold"},
-                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 10, "mes" : "ça brille, un peu ?! vous gagnez 10 Gold"},
+                 {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 75, "mes" : "vous êtes riche ! vous gagnez 75 Gold"},
                  {"type" : "gainG", "name" : "bourse de pièce", "gainG" : 0, "mes" : "euh c'est quoi ça ?! vous gagnez 0 Gold"}
                  ]
 
@@ -159,8 +161,7 @@ def start(Pclass,vit):
                 activeDef = player["def"]
 
             # demander au joueur l'action voulant etre executé
-            action = input(
-                "quelle action voulez vous executer ?\n(ne pas marquer 'attaque' avant le nom de l'action)\n(attaque simple,attaque puissante,attaque double,sort,défense) ")
+            action = input("quelle action voulez vous executer ?\n(ne pas marquer 'attaque' avant le nom de l'action)\n(attaque simple,attaque puissante,attaque double,sort,défense) ")
             print("\n")
 
             # //////////////////////////////////////////////////////////////////////////
@@ -290,7 +291,7 @@ def start(Pclass,vit):
                     player["mana"] = player["maxmana"]
 
             # si il y a une faute de frappe (= pas d'action)
-            elif action != "défense" and action != "sort" and action != "double" and action != "puissante" and action != "simple":
+            if action != "défense" and action != "sort" and action != "double" and action != "puissante" and action != "simple":
                 fight(monster, player, activeWeapon,vit)
 
             # appliquer les dégats de feu de l'arme fire sword
@@ -345,23 +346,8 @@ def start(Pclass,vit):
                 print("vous avez vaincu !")
                 break
 
-        # lors de la fin du combat donner des récompenses
-        if player["health"] > monster["health"]:
-            addG = random.randint(0, 4)
-            if addG == 0:
-                armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
-                inv["armList"].append(armeR)
-                print("vous trouvez ? une arme ! Vous gagnez", armeR["name"])
-            if addG == 1:
-                itemR = itemsList[random.randint(0,len(itemsList)-1)]
-                inv["item"].append(itemR)
-                print("vous remarquez un objet sur le monstre, vous gagnez", itemR["name"])
-            else:
-                addG = random.randint(0, 100)
-                print("vous gagnez", addG, "gold")
-                player["gold"] += addG
-            return "a"
-        else:
+        # lors de la fin du combat donner des récompense
+        if player["health"] <= 0:
             print("vous êtes mort...")
             print("vous avez parcouru", c, "salles")
             input("\ntapez entrer pour terminer")
@@ -718,18 +704,7 @@ def start(Pclass,vit):
 
             print("mana : ", player["mana"], "endurance : ", player["endurance"])
 
-        if (monsterA["health"] <= 0 and monsterB["health"] <= 0) and player["health"] > 0:
-            addG = random.randint(0, 4)
-            if addG == 0:
-                armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
-                inv["armList"].append(armeR)
-                print("vous trouvez ? une arme ! Vous gagnez", armeR["name"])
-            else:
-                addG = random.randint(0, 100)
-                print("vous gagnez", addG, "gold")
-                player["gold"] += addG
-
-        elif player["health"] <= 0:
+        if player["health"] <= 0:
             print("vous êtes mort...")
             print("vous avez parcouru", c, "salles")
             input("\ntapez entrer pour terminer")
@@ -806,7 +781,7 @@ def start(Pclass,vit):
             #event = "F"
 
         if event == "M":
-
+            monsterList = wood()
             #lance un combat contre un ou deux monstre(s) et remplis les paramètres
             monsterSpe = random.randint(0, 10)
             if c <= 14:
@@ -830,6 +805,19 @@ def start(Pclass,vit):
                     monsterB = monsterList[random.randint(0, len(monsterList)-1)]
                 print("quoi ?!", monsterA["type"], "et", monsterB["type"], "vous attaquent")
                 fight2(monsterA, monsterB, player, activeWeapon,vit)
+                addG = random.randint(0, 4)
+                if addG == 0:
+                    armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
+                    inv["armList"].append(armeR)
+                    print("vous trouvez ? une arme ! Vous gagnez", armeR["name"])
+                elif addG == 1:
+                    itemR = itemsList[random.randint(0, len(itemsList) - 1)]
+                    inv["item"].append(itemR)
+                    print("vous remarquez un objet sur le monstre, vous gagnez", itemR["name"])
+                else:
+                    addG = random.randint(0, 100)
+                    print("vous gagnez", addG, "gold")
+                    player["gold"] += addG
                 player["atk"] = player["maxatk"]
                 player["health"] += 30
                 if player["health"] > player["maxhealth"]:
@@ -846,6 +834,19 @@ def start(Pclass,vit):
                 monsterE = monsterList[random.randint(0, len(monsterList)-1)]
                 print(monsterE["type"], "vous attaque")
                 fight(monsterE, player, activeWeapon,vit)
+                addG = random.randint(0, 4)
+                if addG == 0:
+                    armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
+                    inv["armList"].append(armeR)
+                    print("vous trouvez ? une arme ! Vous gagnez", armeR["name"])
+                elif addG == 1:
+                    itemR = itemsList[random.randint(0, len(itemsList) - 1)]
+                    inv["item"].append(itemR)
+                    print("vous remarquez un objet sur le monstre, vous gagnez", itemR["name"])
+                else:
+                    addG = random.randint(0, 100)
+                    print("vous gagnez", addG, "gold")
+                    player["gold"] += addG
                 player["atk"] = player["maxatk"]
                 player["health"] += 15
                 if player["health"] > player["maxhealth"]:
