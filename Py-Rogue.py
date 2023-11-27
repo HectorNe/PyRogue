@@ -49,7 +49,7 @@ def menu(vit):
         print("")
         choix = input("tapez le numéro de votre choix ")
         if choix == "1":
-            print("1=double, 2=normal, 4=moitié")
+            print("1=rapide, 2=normal, 4=lent")
             vit = input("choisissez la vitesse voulue")
             if vit == "1" or vit == "2" or vit == "4":
                 vit =  int(vit) / 2
@@ -172,6 +172,9 @@ def start(Pclass,vit):
                 else:
                     # attaque sans coup critique + calcul des dégats
                     plAt = player["atk"] * activeWeapon["dam"]
+
+                plAt = plAt - ((plAt * monster["def"]) // 100)
+
                 # affichage des dégats et appliquation
                 print("vous infligez à l'ennemi", round(plAt), "dégats !")
                 monster["health"] -= round(plAt)
@@ -188,15 +191,22 @@ def start(Pclass,vit):
                 if player["endurance"] < 5:
                     print("vous n'avez plus assez d'endurance")
                     fight(monster, player, activeWeapon,vit)
+
+                elif activeWeapon["name"] == "arc" and player["endurance"] < 3:
+                    print("vous n'avez plus assez d'endurance")
+                    fight(monster, player, activeWeapon,vit)
                 # tester si l'arme et un arc, qui coute moins d'endurance (simulé en rajoutant de l'endurance)
-                if "arc" in activeWeapon:
-                    player["endurance"] += 1
                 else:
+                    if activeWeapon["name"] == "arc":
+                        player["endurance"] += 2
                     # tester si il y a coup critique et appliquer si oui
                     if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
                         plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                     else:
                         plAt = player["atk"] * activeWeapon["dam"]
+
+                    plAt = plAt - ((plAt * monster["def"]) // 100)
+
                     # appliquer le bonus de dégat
                     plAt = plAt * 2.5
                     # afficher les dégats et les appliquer
@@ -216,15 +226,22 @@ def start(Pclass,vit):
                 if player["endurance"] < 5:
                     print("vous n'avez plus assez d'endurance")
                     fight(monster, player, activeWeapon,vit)
-                if "arc" in activeWeapon:
-                    player["endurance"] += 1
+
+                elif activeWeapon["name"] == "arc" and player["endurance"] < 3:
+                    print("vous n'avez plus assez d'endurance")
+                    fight(monster, player, activeWeapon,vit)
                 else:
+                    if activeWeapon["name"] == "arc":
+                        player["endurance"] += 2
                     # lancer 2 fois l'action d'attaque simple
                     for atk in range(2):
                         if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
                             plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             plAt = player["atk"] * activeWeapon["dam"]
+
+                        plAt = plAt - ((plAt * monster["def"]) // 100)
+
                         print("vous infligez à l'ennemi", round(plAt), "dégats !")
                         monster["health"] -= round(plAt)
                     player["endurance"] -= 5
@@ -337,12 +354,13 @@ def start(Pclass,vit):
                 print("vous trouvez ? une arme ! Vous gagnez", armeR["name"])
             if addG == 1:
                 itemR = itemsList[random.randint(0,len(itemsList)-1)]
-                inv["armList"].append(armeR)
+                inv["item"].append(itemR)
                 print("vous remarquez un objet sur le monstre, vous gagnez", itemR["name"])
             else:
                 addG = random.randint(0, 100)
                 print("vous gagnez", addG, "gold")
                 player["gold"] += addG
+            return "a"
         else:
             print("vous êtes mort...")
             print("vous avez parcouru", c, "salles")
@@ -377,6 +395,9 @@ def start(Pclass,vit):
                         plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                     else:
                         plAt = player["atk"] * activeWeapon["dam"]
+
+                    plAt = plAt - (((plAt * monsterA["def"]) // 100))
+
                     print("vous infligez à l'ennemi", round(plAt), "dégats !")
                     monsterA["health"] -= round(plAt)
 
@@ -384,6 +405,9 @@ def start(Pclass,vit):
                         plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                     else:
                         plAt = player["atk"] * activeWeapon["dam"]
+
+                    plAt = plAt - (((plAt * monsterB["def"]) // 100))
+
                     print("vous infligez à l'ennemi", round(plAt), "dégats !")
                     monsterB["health"] -= round(plAt)
 
@@ -395,6 +419,9 @@ def start(Pclass,vit):
                             plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             plAt = player["atk"] * activeWeapon["dam"]
+
+                        plAt = plAt - (((plAt * monsterA["def"]) // 100))
+
                         print("vous infligez à l'ennemi", round(plAt), "dégats !")
                         monsterA["health"] -= round(plAt)
 
@@ -403,6 +430,9 @@ def start(Pclass,vit):
                             plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             plAt = player["atk"] * activeWeapon["dam"]
+
+                        plAt = plAt - (((plAt * monsterB["def"]) // 100))
+
                         print("vous infligez à l'ennemi", round(plAt), "dégats !")
                         monsterB["health"] -= round(plAt)
                 # si faute, relancer le tour
@@ -414,6 +444,8 @@ def start(Pclass,vit):
 
             # attaque puissante mais il faut viser l'ennemi
             elif action == "puissante":
+                if activeWeapon["name"] == "arc":
+                    player["endurance"] += 2
                 if player["endurance"] < 5:
                     print("vous n'avez plus assez d'endurance")
                     fight2(monsterA, monsterB, player, activeWeapon,vit)
@@ -423,6 +455,9 @@ def start(Pclass,vit):
                         plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                     else:
                         plAt = player["atk"] * activeWeapon["dam"]
+
+                    plAt = plAt - (((plAt * monsterA["def"]) // 100))
+
                     plAt = plAt * 2.5
                     print("vous infligez à l'ennemi", round(plAt), "dégats !")
                     monsterA["health"] -= round(plAt)
@@ -430,6 +465,9 @@ def start(Pclass,vit):
                         plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                     else:
                         plAt = player["atk"] * activeWeapon["dam"]
+
+                    plAt = plAt - (((plAt * monsterB["def"]) // 100))
+
                     plAt = plAt * 2.5
                     print("vous infligez à l'ennemi", round(plAt), "dégats !")
                     monsterB["health"] -= round(plAt)
@@ -442,13 +480,14 @@ def start(Pclass,vit):
                         if player["endurance"] < 5:
                             print("vous n'avez plus assez d'endurance")
                             fight2(monsterA, monsterB, player, activeWeapon,vit)
-                        if "arc" in activeWeapon:
-                            plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
                                 plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                             else:
                                 plAt = player["atk"] * activeWeapon["dam"]
+
+                            plAt = plAt - (((plAt * monsterA["def"]) // 100))
+
                             plAt = plAt * 2.5
                             print("vous infligez à l'ennemi", round(plAt), "dégats !")
                             monsterA["health"] -= round(plAt)
@@ -458,13 +497,14 @@ def start(Pclass,vit):
                         if player["endurance"] < 5:
                             print("vous n'avez plus assez d'endurance")
                             fight2(monsterA, monsterB, player, activeWeapon,vit)
-                        if "arc" in activeWeapon:
-                            plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
                                 plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                             else:
                                 plAt = player["atk"] * activeWeapon["dam"]
+
+                            plAt = plAt - (((plAt * monsterB["def"]) // 100))
+
                             plAt = plAt * 2.5
                             print("vous infligez à l'ennemi", round(plAt), "dégats !")
                             monsterB["health"] -= round(plAt)
@@ -475,6 +515,8 @@ def start(Pclass,vit):
 
             #attaque deux fois le même monstre
             elif action == "double":
+                if activeWeapon["name"] == "arc":
+                    player["endurance"] += 2
                 #test si l'attaque est en zone
                 if "explode" in activeWeapon:
                     if player["endurance"] < 5:
@@ -485,9 +527,19 @@ def start(Pclass,vit):
                             plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             plAt = player["atk"] * activeWeapon["dam"]
-                        print("vous infligez aux ennemis", round(plAt), "dégats !")
+
+                        plAt = plAt - (((plAt * monsterA["def"]) // 100))
+
+                        if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
+                            plAt2 = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
+                        else:
+                            plAt2 = player["atk"] * activeWeapon["dam"]
+
+                        plAt2 = plAt2 - (((plAt2 * monsterB["def"]) // 100))
+
+                        print("vous infligez aux ennemis", round(plAt), "et",round(plAt2),"dégats !")
                         monsterA["health"] -= round(plAt)
-                        monsterB["health"] -= round(plAt)
+                        monsterB["health"] -= round(plAt2)
                     player["endurance"] -= 5
                 #si l'attaque n'est pas de zone
                 if "explode" not in activeWeapon:
@@ -496,8 +548,6 @@ def start(Pclass,vit):
                         if player["endurance"] < 5:
                             print("vous n'avez plus assez d'endurance")
                             fight2(monsterA, monsterB, player, activeWeapon,vit)
-                        if "arc" in activeWeapon:
-                            plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             for atk in range(2):
                                 if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
@@ -505,16 +555,17 @@ def start(Pclass,vit):
                                         "dam"]
                                 else:
                                     plAt = player["atk"] * activeWeapon["dam"]
-                                print("vous infligez à l'ennemi", round(plAt), "dégats !")
-                                monsterA["health"] -= round(plAt)
-                            player["endurance"] -= 5
+
+                        plAt = plAt - (((plAt * monsterA["def"]) // 100))
+
+                        print("vous infligez à l'ennemi", round(plAt), "dégats !")
+                        monsterA["health"] -= round(plAt)
+                        player["endurance"] -= 5
 
                     if vise == 2 and monsterB["health"] >= 0 and "explode" not in activeWeapon:
                         if player["endurance"] < 5:
                             print("vous n'avez plus assez d'endurance")
                             fight2(monsterA, monsterB, player, activeWeapon,vit)
-                        if "arc" in activeWeapon:
-                            plAt = player["atk"] * (player["critDam"] + activeWeapon["critDam"]) * activeWeapon["dam"]
                         else:
                             for atk in range(2):
                                 if random.randint(0, 100) <= player["critL"] + activeWeapon["critL"]:
@@ -522,9 +573,12 @@ def start(Pclass,vit):
                                         "dam"]
                                 else:
                                     plAt = player["atk"] * activeWeapon["dam"]
-                                print("vous infligez à l'ennemi", round(plAt), "dégats !")
-                                monsterB["health"] -= round(plAt)
-                            player["endurance"] -= 5
+
+                        plAt = plAt - (((plAt * monsterB["def"]) // 100))
+
+                        print("vous infligez à l'ennemi", round(plAt), "dégats !")
+                        monsterB["health"] -= round(plAt)
+                        player["endurance"] -= 5
 
                 if monsterB["health"] <= 0 and monsterA["health"] <= 0:
                     print("vous avez vaincu !")
@@ -683,17 +737,17 @@ def start(Pclass,vit):
     #///////////////////////////////////////////////////////////////////////////////
 
     #definition des combats de boss et de leurs stats
-    def dragBoss(player,activeWeapon):
+    def dragBoss(player,activeWeapon,vit):
         monster = {"type": "dragon", "atk": 25, "def": 10, "critL": 10, "critDam": 1.5, "health": 750,"fire breath" : True}
         fight(monster,player,activeWeapon,vit)
-    def golBoss(player,activeWeapon):
+    def golBoss(player,activeWeapon,vit):
         monster = {"type": "géant", "atk": 20, "def": 5, "critL": 20, "critDam": 1.2, "health": 500}
         fight(monster, player, activeWeapon,vit)
     #def goblinKing(player,activeWeapon):
 
 
     #definition du lancement de la rencontre avec le boss (ou autre surprise...)
-    def boss(player,activeWeapon):
+    def boss(player,activeWeapon,vit):
         event = random.randint(1,100)
         if event <3:
             print("vous entrez dans une caverne...")
@@ -721,16 +775,26 @@ def start(Pclass,vit):
     #///////////////////////////////////////////////////////////////////////////////
 
     #boucle de 30 salles puis LE BOSS !
+    def wood():
+
+        # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
+        monsterList = [{"type": "un zombie", "atk": 7, "def": 1, "critL": 10, "critDam": 5, "health": 100},
+                       {"type": "un squelette", "atk": 5, "def": 2, "critL": 10, "critDam": 1.5, "health": 100},
+                       {"type": "un zombie ELITE !", "atk": 15, "def": 4, "critL": 15, "critDam": 3, "health": 200},
+                       {"type": "un loup", "atk": 10, "def": 1, "critL": 10, "critDam": 2, "health": 150}]
+        return monsterList
+
+    def swamp():
+        # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
+        monsterList = [{"type": "un crapeau géant", "atk": 10, "def": 2, "critL": 10, "critDam": 3, "health": 150},
+                       {"type": "une plante carnivore", "atk": 15, "def": 1, "critL": 15, "critDam": 1.5, "health": 200},
+                       {"type": "un gnome", "atk": 5, "def": 7, "critL": 20, "critDam": 5, "health": 150},
+                       {"type": "une nuée de rats", "atk": 10, "def": 15, "critL": 0, "critDam": 2, "health": 100}]
+        return monsterList
+
     for c in range(30):
 
-
         eventP = random.randint(0, 9)
-
-        #definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "zombie", "atk": 7, "def": 1, "critL": 10, "critDam": 5, "health": 100},
-                       {"type": "squelette", "atk": 5, "def": 2, "critL": 10, "critDam": 1.5, "health": 100},
-                       {"type": "zombie ELITE !", "atk": 15, "def": 4, "critL": 15, "critDam": 3, "health": 200},
-                       {"type": "loup", "atk": 10, "def": 1, "critL": 10, "critDam": 2, "health": 150}]
 
         if eventP <= 5:
             event = "M"
@@ -745,14 +809,25 @@ def start(Pclass,vit):
 
             #lance un combat contre un ou deux monstre(s) et remplis les paramètres
             monsterSpe = random.randint(0, 10)
+            if c <= 14:
+                monsterList = wood()
+
+            elif c == 15:
+                print("vous entrez dans les marais...")
+                time.sleep(1*vit)
+                monsterList = swamp()
+
+            elif c > 15:
+                monsterList = swamp()
+
             if monsterSpe == 0:
-                monsterA = monsterList[random.randint(0, 3)]
+                monsterA = monsterList[random.randint(0, len(monsterList)-1)]
                 #en fait si on affronte 2 monstres identique, ça fait un bug où les deux se prennent les mêmes dégats, du coup cette ligne permet de ne pas avoir le même monstre
                 time.sleep(0.01)
-                monsterB = monsterList[random.randint(0, 3)]
+                monsterB = monsterList[random.randint(0, len(monsterList)-1)]
                 while monsterA == monsterB:
                     #pareil que le commentaire précedent
-                    monsterB = monsterList[random.randint(0, 3)]
+                    monsterB = monsterList[random.randint(0, len(monsterList)-1)]
                 print("quoi ?!", monsterA["type"], "et", monsterB["type"], "vous attaquent")
                 fight2(monsterA, monsterB, player, activeWeapon,vit)
                 player["atk"] = player["maxatk"]
@@ -768,18 +843,8 @@ def start(Pclass,vit):
                 print("vos statistiques ont été (un peu) restoré")
 
             else:
-                Rmonster = random.randint(1, 10)
-                if Rmonster == 1:
-                    Rmonster = 2
-                elif 4 >= Rmonster > 1:
-                    Rmonster = 0
-                elif 7 >= Rmonster > 4:
-                    Rmonster = 1
-                elif 10 >= Rmonster > 7:
-                    Rmonster = 3
-
-                monsterE = monsterList[Rmonster]
-                print("un", monsterE["type"], "vous attaque")
+                monsterE = monsterList[random.randint(0, len(monsterList)-1)]
+                print(monsterE["type"], "vous attaque")
                 fight(monsterE, player, activeWeapon,vit)
                 player["atk"] = player["maxatk"]
                 player["health"] += 15
@@ -1005,14 +1070,14 @@ def classChoix(classChoos,vit):
                 classChoos = classList[c]
             else:
                 print("vous avez dit non...")
-                classChoos = classChoix(classChoos)
+                classChoos = classChoix(classChoos,vit)
                 return classChoos
         elif Choix == "???":
             print("mais qu'est-ce que ?")
     if classChoos != "":
         return classChoos
     else:
-        classChoos = classChoix(classChoos)
+        classChoos = classChoix(classChoos,vit)
         return classChoos
 
 #ça c'est le truc qui lance tout...
