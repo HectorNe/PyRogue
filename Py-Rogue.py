@@ -181,7 +181,6 @@ def start(Pclass,vit):
                 monster["health"] -= round(plAt)
                 # tester si le monstre à été tué suite à l'action
                 if monster["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
             # //////////////////////////////////////////////////////////////////////////
@@ -216,7 +215,6 @@ def start(Pclass,vit):
                     player["endurance"] -= 5
                     # tester si le monstre est mort
                 if monster["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
 
@@ -247,7 +245,6 @@ def start(Pclass,vit):
                         monster["health"] -= round(plAt)
                     player["endurance"] -= 5
                 if monster["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
 
@@ -270,7 +267,6 @@ def start(Pclass,vit):
                 # consommer le mana
                 player["mana"] -= spells[launchSp]["cost"]
                 if monster["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
             # acion de défense qui regenère des stats et augmente temporairement la défense
@@ -302,7 +298,7 @@ def start(Pclass,vit):
             # tester si le joueur est mort
             if player["health"] <= 0:
                 print("vous êtes mort...")
-                print("vous avez parcouru",c,"salles")
+                print("vous avez parcouru",c+1,"salles")
                 input("\ntapez entrer pour terminer")
                 break
             # tester si il y a un coup critique de la part du monstre
@@ -343,13 +339,12 @@ def start(Pclass,vit):
             print("\n\n")
 
             if monster["health"] <= 0:
-                print("vous avez vaincu !")
                 break
 
         # lors de la fin du combat donner des récompense
         if player["health"] <= 0:
             print("vous êtes mort...")
-            print("vous avez parcouru", c, "salles")
+            print("vous avez parcouru", c+1, "salles")
             input("\ntapez entrer pour terminer")
 
 
@@ -425,7 +420,6 @@ def start(Pclass,vit):
                 else:
                     fight2(monsterA, monsterB, player, activeWeapon,vit)
                 if monsterA["health"] <= 0 and monsterB["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
             # attaque puissante mais il faut viser l'ennemi
@@ -496,7 +490,6 @@ def start(Pclass,vit):
                             monsterB["health"] -= round(plAt)
                             player["endurance"] -= 5
                 if monsterB["health"] <= 0 and monsterA["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
             #attaque deux fois le même monstre
@@ -567,7 +560,6 @@ def start(Pclass,vit):
                         player["endurance"] -= 5
 
                 if monsterB["health"] <= 0 and monsterA["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
 
             #lancer un sort
@@ -623,7 +615,6 @@ def start(Pclass,vit):
                         player["mana"] -= spells[launchSp]["cost"]
 
                 if monsterA["health"] <= 0 and monsterB["health"] <= 0:
-                    print("vous avez vaincu !")
                     break
             #action de défense, regeneration et tanker les dégats sont monnaie courante ici...
             elif action == "défense":
@@ -651,7 +642,7 @@ def start(Pclass,vit):
             #tester la mort du joueur et attaque des monstres
             if player["health"] <= 0:
                 print("vous êtes mort...")
-                print("vous avez parcouru", c, "salles")
+                print("vous avez parcouru", c+1, "salles")
                 input("\ntapez entrer pour terminer")
                 break
 
@@ -706,7 +697,7 @@ def start(Pclass,vit):
 
         if player["health"] <= 0:
             print("vous êtes mort...")
-            print("vous avez parcouru", c, "salles")
+            print("vous avez parcouru", c+1, "salles")
             input("\ntapez entrer pour terminer")
 
     #///////////////////////////////////////////////////////////////////////////////
@@ -753,18 +744,18 @@ def start(Pclass,vit):
     def wood():
 
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un zombie", "atk": 7, "def": 1, "critL": 10, "critDam": 5, "health": 100},
-                       {"type": "un squelette", "atk": 5, "def": 2, "critL": 10, "critDam": 1.5, "health": 100},
-                       {"type": "un zombie ELITE !", "atk": 15, "def": 4, "critL": 15, "critDam": 3, "health": 200},
-                       {"type": "un loup", "atk": 10, "def": 1, "critL": 10, "critDam": 2, "health": 150}]
+        monsterList = [{"type": "un zombie", "atk": 7, "def": 5, "critL": 10, "critDam": 5, "health": 100},
+                       {"type": "un squelette", "atk": 5, "def": 10, "critL": 10, "critDam": 1.5, "health": 100},
+                       {"type": "un zombie ELITE !", "atk": 15, "def": 10, "critL": 15, "critDam": 3, "health": 200},
+                       {"type": "un loup", "atk": 10, "def": 5, "critL": 10, "critDam": 2, "health": 150}]
         return monsterList
 
     def swamp():
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un crapeau géant", "atk": 10, "def": 2, "critL": 10, "critDam": 3, "health": 150},
-                       {"type": "une plante carnivore", "atk": 15, "def": 1, "critL": 15, "critDam": 1.5, "health": 200},
-                       {"type": "un gnome", "atk": 5, "def": 7, "critL": 20, "critDam": 5, "health": 150},
-                       {"type": "une nuée de rats", "atk": 10, "def": 15, "critL": 0, "critDam": 2, "health": 100}]
+        monsterList = [{"type": "un crapeau géant", "atk": 20, "def": 20, "critL": 10, "critDam": 3, "health": 150},
+                       {"type": "une plante carnivore", "atk": 45, "def": 10, "critL": 10, "critDam": 1.5, "health": 200},
+                       {"type": "un gnome", "atk": 15, "def": 7, "critL": 20, "critDam": 5, "health": 150},
+                       {"type": "une nuée de rats", "atk": 30, "def": 15, "critL": 1, "critDam": 2, "health": 100}]
         return monsterList
 
     for c in range(30):
@@ -805,6 +796,9 @@ def start(Pclass,vit):
                     monsterB = monsterList[random.randint(0, len(monsterList)-1)]
                 print("quoi ?!", monsterA["type"], "et", monsterB["type"], "vous attaquent")
                 fight2(monsterA, monsterB, player, activeWeapon,vit)
+                if player["health"] <= 0:
+                    break
+                print("vous avez vaincu !")
                 addG = random.randint(0, 4)
                 if addG == 0:
                     armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
@@ -834,6 +828,9 @@ def start(Pclass,vit):
                 monsterE = monsterList[random.randint(0, len(monsterList)-1)]
                 print(monsterE["type"], "vous attaque")
                 fight(monsterE, player, activeWeapon,vit)
+                if player["health"] <= 0:
+                    break
+                print("vous avez vaincu !")
                 addG = random.randint(0, 4)
                 if addG == 0:
                     armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
@@ -1040,7 +1037,7 @@ def start(Pclass,vit):
         print("\n\n")
         #si la dernière salle est finie : boss
         if c == 29:
-            boss(player,activeWeapon)
+            boss(player,activeWeapon,vit)
 
 #choix des classes (et application)
 def classChoix(classChoos,vit):
