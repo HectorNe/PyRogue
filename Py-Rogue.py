@@ -103,10 +103,12 @@ def start(Pclass,vit):
 
 
     # définir la liste des armes disponible dans le jeu (trié par type d'arme, puis chaque arme dans un dictionnaire)
-    weaponList = [[{"name": "fire sword", "dam": 1.5, "critL": 5, "critDam": 1.3, "feu": 10}],
-                  [{"name": "ice axe", "dam": 2, "critL": 3, "critDam": 1.1, "taunt": 10}],
-                  [{"name" : "explosive bow", "dam" : 1.25, "critL" : 10, "critDam" : 1.2, "explode" : True}],
-                  [{"name": "shadow dagger", "dam": 1, "critL": 20, "critDam": 1.3,"esquive": 10}]]
+    weaponList = [[{"name": "épée enflammée", "dam": 1.5, "critL": 5, "critDam": 1.3, "feu": 10}],
+                  [{"name": "hache de glace", "dam": 2, "critL": 3, "critDam": 1.1, "taunt": 10}],
+                  [{"name" : "arc explosif", "dam" : 1.25, "critL" : 10, "critDam" : 1.2, "explode" : True}],
+                  [{"name": "dague des ombres", "dam": 1, "critL": 20, "critDam": 1.3,"esquive": 10}],
+                  [{"name": "lance de feu", "dam": 1.2, "critL": 10, "critDam": 1.5, "feu" : 20}],
+                  [{"name": "marteau de guerre", "dam": 3, "critL": 15, "critDam": 0.8}]]
 
     itemsList = [
                  {"type" : "regenV", "name" : "potion de soin", "regenV" : 50,"mes" : "c'est sucré ! la potion vous soigne 50 PV"},
@@ -127,9 +129,9 @@ def start(Pclass,vit):
 
     # équiper l'arme choisi par le joueur
     if choose in Startweapon:
-        activeWeapon = Startweapon[choose]
+        activeWeapon = {"name": "marteau de guerre", "dam": 3.5, "critL": 15, "critDam": 1.1}#Startweapon[choose]
     else:
-        start(Pclass)
+        start(Pclass,vit)
 
 
     inv = {"armList" : [], "item" : [], "activeWeapon" : {}}
@@ -292,8 +294,8 @@ def start(Pclass,vit):
 
             # appliquer les dégats de feu de l'arme fire sword
             if action != "sort" and "feu" in activeWeapon:
-                print("le feu inflige 10 dégat à l'adversaire")
-                monster["health"] -= 10
+                print("le feu inflige", activeWeapon["feu"], "dégat à l'adversaire")
+                monster["health"] -= int(activeWeapon["feu"])
 
             # tester si le joueur est mort
             if player["health"] <= 0:
@@ -307,6 +309,8 @@ def start(Pclass,vit):
             else:
                 moAt = monster["atk"]
 
+            if activeWeapon["name"] == "marteau de guerre":
+                activeDef -= 10
             # tester si le joueur esquive (avec la shadow dagger)
             if ("esquive" in activeWeapon and random.randint(0, 100) <= activeWeapon["esquive"]) or (Pclass["comp"] == "A" and random.randint(0, 100) <= 5):
                 print("esquive !")
@@ -704,10 +708,10 @@ def start(Pclass,vit):
 
     #definition des combats de boss et de leurs stats
     def dragBoss(player,activeWeapon,vit):
-        monster = {"type": "dragon", "atk": 25, "def": 10, "critL": 10, "critDam": 1.5, "health": 750,"fire breath" : True}
+        monster = {"type": "dragon", "atk": 25, "def": 10, "critL": 10, "critDam": 1.5, "health": 800,"fire breath" : True}
         fight(monster,player,activeWeapon,vit)
     def golBoss(player,activeWeapon,vit):
-        monster = {"type": "géant", "atk": 20, "def": 5, "critL": 20, "critDam": 1.2, "health": 500}
+        monster = {"type": "géant", "atk": 20, "def": 5, "critL": 20, "critDam": 1.2, "health": 600}
         fight(monster, player, activeWeapon,vit)
     #def goblinKing(player,activeWeapon):
 
@@ -744,18 +748,18 @@ def start(Pclass,vit):
     def wood():
 
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un zombie", "atk": 7, "def": 5, "critL": 10, "critDam": 5, "health": 100},
+        monsterList = [{"type": "un zombie", "atk": 7, "def": 7, "critL": 10, "critDam": 5, "health": 100},
                        {"type": "un squelette", "atk": 5, "def": 10, "critL": 10, "critDam": 1.5, "health": 100},
-                       {"type": "un zombie ELITE !", "atk": 15, "def": 10, "critL": 15, "critDam": 3, "health": 200},
+                       {"type": "un zombie ELITE !", "atk": 15, "def": 15, "critL": 15, "critDam": 3, "health": 200},
                        {"type": "un loup", "atk": 10, "def": 5, "critL": 10, "critDam": 2, "health": 150}]
         return monsterList
 
     def swamp():
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un crapeau géant", "atk": 20, "def": 20, "critL": 10, "critDam": 3, "health": 150},
-                       {"type": "une plante carnivore", "atk": 45, "def": 10, "critL": 10, "critDam": 1.5, "health": 200},
-                       {"type": "un gnome", "atk": 15, "def": 7, "critL": 20, "critDam": 5, "health": 150},
-                       {"type": "une nuée de rats", "atk": 30, "def": 15, "critL": 1, "critDam": 2, "health": 100}]
+        monsterList = [{"type": "un crapeau géant", "atk": 20, "def": 30, "critL": 10, "critDam": 3, "health": 150},
+                       {"type": "une plante carnivore", "atk": 45, "def": 15, "critL": 10, "critDam": 1.5, "health": 200},
+                       {"type": "un gnome", "atk": 13, "def": 50, "critL": 20, "critDam": 5, "health": 100},
+                       {"type": "une nuée de rats", "atk": 30, "def": 20, "critL": 1, "critDam": 3, "health": 100}]
         return monsterList
 
     for c in range(30):
