@@ -13,4 +13,5 @@
 
 
     -28/11/2023 : ajout de 2 armes, et résolution de bugs mineurs
+    
                   ajout d'une option de changement de difficulté (Béta)
