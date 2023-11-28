@@ -10,4 +10,5 @@
 
                   correction du bug de la mort avec la fin de combat
 
+
     -28/11/2023 : ajout de 2 armes, et résolution de bugs mineurs
