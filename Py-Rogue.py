@@ -2,8 +2,9 @@ import random
 import time
 
 vit = 1
+diff = 1
 
-def menu(vit):
+def menu(vit,diff):
     """
     la fonction menu affiche un menu qui permet d'afficher les crédits ou encore de lancer le jeu
     """
@@ -21,7 +22,7 @@ def menu(vit):
             print("\n")
             time.sleep(0.25*vit)
         Pclass = classChoix(classChoos,vit)
-        start(Pclass,vit)
+        start(Pclass,vit,diff)
     #affiche les crédits
     if click == "2":
         for c in range(6):
@@ -31,18 +32,16 @@ def menu(vit):
         time.sleep(1*vit)
         print("Développement : Hector.D")
         time.sleep(1*vit)
-        print("Merci à Johann.S pour son pré-test")
+        print("Merci à Johann.S pour ses idées")
         time.sleep(1*vit)
         print("Merci à Pablo.N pour ses idées")
         time.sleep(1*vit)
         print("ainsi qu'à Oliver.D pour son aide")
-        time.sleep(1*vit)
-        print("ainsi qu'à toutes les autres personnes ayant testé ce programme")
         time.sleep(1.5*vit)
         print("bon jeu, et bonne chance...")
         time.sleep(1*vit)
         print("\n\n\n\n")
-        menu(vit)
+        menu(vit,diff)
     #permet de changer certains paramètres
     if click == "3":
         for c in range(6):
@@ -58,10 +57,21 @@ def menu(vit):
             if vit == "1" or vit == "2" or vit == "4":
                 vit =  int(vit) / 2
                 print("\n\n\n\n")
-                menu(vit)
+                menu(vit,diff)
+        elif choix == "2":
+            difC = input("1-facile\n2-classique\n3-difficile\n4-démon\nentrez votre choix de difficulté ")
+            if difC == "1":
+                diff = 0.75
+            if difC == "2":
+                diff = 1
+            if difC == "3":
+                diff = 1.5
+            if difC == "4":
+                diff = 2
+            menu(vit,diff)
         else:
             print("vous allez être réorienté vers le menu")
-            menu(vit)
+            menu(vit,diff)
     #affiche un 'tutoriel'
     if click == "4":
         for c in range(6):
@@ -76,9 +86,9 @@ def menu(vit):
         print("bon courage")
         time.sleep(1*vit)
         print("\n\n\n\n")
-        menu(vit)
+        menu(vit,diff)
 
-def start(Pclass,vit):
+def start(Pclass,vit,diff):
     """
     la fonction start lance une partie du jeu et... ne renvoie rien
     """
@@ -131,7 +141,7 @@ def start(Pclass,vit):
 
     # équiper l'arme choisi par le joueur
     if choose in Startweapon:
-        activeWeapon = {"name": "marteau de guerre", "dam": 3.5, "critL": 15, "critDam": 1.1}#Startweapon[choose]
+        activeWeapon = Startweapon[choose]
     else:
         start(Pclass,vit)
 
@@ -709,11 +719,11 @@ def start(Pclass,vit):
     #///////////////////////////////////////////////////////////////////////////////
 
     #definition des combats de boss et de leurs stats
-    def dragBoss(player,activeWeapon,vit):
-        monster = {"type": "dragon", "atk": 25, "def": 10, "critL": 10, "critDam": 1.5, "health": 800,"fire breath" : True}
+    def dragBoss(player,activeWeapon,vit,diff):
+        monster = {"type": "dragon", "atk": 25*diff, "def": 10*diff, "critL": 10*diff, "critDam": 1.5*diff, "health": 800*diff,"fire breath" : True}
         fight(monster,player,activeWeapon,vit)
-    def golBoss(player,activeWeapon,vit):
-        monster = {"type": "géant", "atk": 20, "def": 5, "critL": 20, "critDam": 1.2, "health": 600}
+    def golBoss(player,activeWeapon,vit,diff):
+        monster = {"type": "géant", "atk": 20*diff, "def": 5*diff, "critL": 20*diff, "critDam": 1.2*diff, "health": 600*diff}
         fight(monster, player, activeWeapon,vit)
     #def goblinKing(player,activeWeapon):
 
@@ -729,14 +739,14 @@ def start(Pclass,vit):
             time.sleep(0.5*vit)
             print("je pensais qu'ils étaient tous éteints \n")
             time.sleep(0.5*vit)
-            dragBoss(player,activeWeapon)
+            dragBoss(player,activeWeapon,diff)
         if 3<= event <=100:
             print("la colline sur lequel vous vous trouvez se met à bouger")
             time.sleep(1*vit)
             print("mais ce n'était pas une colline...")
             time.sleep(0.5*vit)
             print("un géant vous attaque !")
-            golBoss(player,activeWeapon)
+            golBoss(player,activeWeapon,diff)
         if event == 100:
             print("alors que vous marchez dans la forêt, vous apercevez une lueur")
             print("alors que vous vous faufilez à travers les branchages")
@@ -747,21 +757,21 @@ def start(Pclass,vit):
     #///////////////////////////////////////////////////////////////////////////////
 
     #boucle de 30 salles puis LE BOSS !
-    def wood():
+    def wood(diff):
 
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un zombie", "atk": 7, "def": 7, "critL": 10, "critDam": 5, "health": 100},
-                       {"type": "un squelette", "atk": 5, "def": 10, "critL": 10, "critDam": 1.5, "health": 100},
-                       {"type": "un zombie ELITE !", "atk": 15, "def": 15, "critL": 15, "critDam": 3, "health": 200},
-                       {"type": "un loup", "atk": 10, "def": 5, "critL": 10, "critDam": 2, "health": 150}]
+        monsterList = [{"type": "un zombie", "atk": 7*diff, "def": 7*diff, "critL": 10*diff, "critDam": 5*diff, "health": 100*diff},
+                       {"type": "un squelette", "atk": 5*diff, "def": 10*diff, "critL": 10*diff, "critDam": 1.5*diff, "health": 100*diff},
+                       {"type": "un zombie ELITE !", "atk": 15*diff, "def": 15*diff, "critL": 15*diff, "critDam": 3*diff, "health": 200*diff},
+                       {"type": "un loup", "atk": 10*diff, "def": 5*diff, "critL": 10*diff, "critDam": 2*diff, "health": 150*diff}]
         return monsterList
 
-    def swamp():
+    def swamp(diff):
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un crapeau géant", "atk": 20, "def": 30, "critL": 10, "critDam": 3, "health": 150},
-                       {"type": "une plante carnivore", "atk": 45, "def": 15, "critL": 10, "critDam": 1.5, "health": 200},
-                       {"type": "un gnome", "atk": 13, "def": 50, "critL": 20, "critDam": 5, "health": 100},
-                       {"type": "une nuée de rats", "atk": 30, "def": 20, "critL": 1, "critDam": 3, "health": 100}]
+        monsterList = [{"type": "un crapeau géant", "atk": 20*diff, "def": 30*diff, "critL": 10*diff, "critDam": 3*diff, "health": 150*diff},
+                       {"type": "une plante carnivore", "atk": 45*diff, "def": 15*diff, "critL": 10*diff, "critDam": 1.5*diff, "health": 200*diff},
+                       {"type": "un gnome", "atk": 13*diff, "def": 50*diff, "critL": 20*diff, "critDam": 5*diff, "health": 100*diff},
+                       {"type": "une nuée de rats", "atk": 30*diff, "def": 20, "critL": 1*diff, "critDam": 3*diff, "health": 100*diff}]
         return monsterList
 
     for c in range(30):
@@ -778,19 +788,19 @@ def start(Pclass,vit):
             #event = "F"
 
         if event == "M":
-            monsterList = wood()
+            monsterList = wood(diff)
             #lance un combat contre un ou deux monstre(s) et remplis les paramètres
             monsterSpe = random.randint(0, 10)
             if c <= 14:
-                monsterList = wood()
+                monsterList = wood(diff)
 
             elif c == 15:
                 print("vous entrez dans les marais...")
                 time.sleep(1*vit)
-                monsterList = swamp()
+                monsterList = swamp(diff)
 
             elif c > 15:
-                monsterList = swamp()
+                monsterList = swamp(diff)
 
             if monsterSpe == 0:
                 monsterA = monsterList[random.randint(0, len(monsterList)-1)]
@@ -1085,4 +1095,4 @@ def classChoix(classChoos,vit):
         return classChoos
 
 #ça c'est le truc qui lance tout...
-menu(vit)
+menu(vit,diff)
