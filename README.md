@@ -15,3 +15,10 @@
     -28/11/2023 : ajout de 2 armes, et résolution de bugs mineurs
     
                   ajout d'une option de changement de difficulté (Béta)
+
+
+    -29/11/2023 : réduction de la difficulté des marais
+
+                  correction du bug du ffeu pendant une double atttaque
+
+                  correction d'un crash dût à la difficulté
