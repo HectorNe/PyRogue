@@ -143,7 +143,7 @@ def start(Pclass,vit,diff):
     if choose in Startweapon:
         activeWeapon = Startweapon[choose]
     else:
-        start(Pclass,vit)
+        start(Pclass,vit,diff)
 
 
     inv = {"armList" : [], "item" : [], "activeWeapon" : {}}
@@ -651,9 +651,17 @@ def start(Pclass,vit,diff):
 
             # appliquer les dégats de feu de l'arme fire sword
             if action != "sort" and "feu" in activeWeapon:
-                print("le feu inflige 10 dégat aux adversaires")
-                monsterA["health"] -= 10
-                monsterB["health"] -= 10
+                if action == "double":
+                    print("le feu inflige", activeWeapon["feu"], "dégat aux adversaires")
+                    monsterA["health"] -= int(activeWeapon["feu"])
+                    monsterB["health"] -= int(activeWeapon["feu"])
+                    print("le feu inflige", activeWeapon["feu"], "dégat aux adversaires")
+                    monsterA["health"] -= int(activeWeapon["feu"])
+                    monsterB["health"] -= int(activeWeapon["feu"])
+                else:
+                    print("le feu inflige", activeWeapon["feu"], "dégat aux adversaires")
+                    monsterA["health"] -= int(activeWeapon["feu"])
+                    monsterB["health"] -= int(activeWeapon["feu"])
 
             #tester la mort du joueur et attaque des monstres
             if player["health"] <= 0:
@@ -729,7 +737,7 @@ def start(Pclass,vit,diff):
 
 
     #definition du lancement de la rencontre avec le boss (ou autre surprise...)
-    def boss(player,activeWeapon,vit):
+    def boss(player,activeWeapon,vit,diff):
         event = random.randint(1,100)
         if event <3:
             print("vous entrez dans une caverne...")
@@ -768,15 +776,18 @@ def start(Pclass,vit,diff):
 
     def swamp(diff):
         # definition des monstres (plus pratique si je segmente en zones, et en plus ça reset leurs stat)
-        monsterList = [{"type": "un crapeau géant", "atk": 20*diff, "def": 30*diff, "critL": 10*diff, "critDam": 3*diff, "health": 150*diff},
-                       {"type": "une plante carnivore", "atk": 45*diff, "def": 15*diff, "critL": 10*diff, "critDam": 1.5*diff, "health": 200*diff},
+        monsterList = [{"type": "un crapeau géant", "atk": 15*diff, "def": 30*diff, "critL": 10*diff, "critDam": 3*diff, "health": 150*diff},
+                       {"type": "une plante carnivore", "atk": 30*diff, "def": 10*diff, "critL": 10*diff, "critDam": 1.5*diff, "health": 200*diff},
                        {"type": "un gnome", "atk": 13*diff, "def": 50*diff, "critL": 20*diff, "critDam": 5*diff, "health": 100*diff},
-                       {"type": "une nuée de rats", "atk": 30*diff, "def": 20, "critL": 1*diff, "critDam": 3*diff, "health": 100*diff}]
+                       {"type": "une nuée de rats", "atk": 25*diff, "def": 20, "critL": 1*diff, "critDam": 3*diff, "health": 100*diff}]
         return monsterList
 
     for c in range(30):
 
         eventP = random.randint(0, 9)
+
+        if c == 15:
+            eventP = 5
 
         if eventP <= 5:
             event = "M"
@@ -1053,7 +1064,7 @@ def start(Pclass,vit,diff):
         print("\n\n")
         #si la dernière salle est finie : boss
         if c == 29:
-            boss(player,activeWeapon,vit)
+            boss(player,activeWeapon,vit,diff)
 
 #choix des classes (et application)
 def classChoix(classChoos,vit):
