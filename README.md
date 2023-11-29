@@ -23,3 +23,5 @@
                   correction du bug du ffeu pendant une double atttaque
 
                   correction d'un crash dût à la difficulté
+
+                  mise à jour des statistiques de classe et de leurs mise en place
