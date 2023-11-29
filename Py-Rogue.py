@@ -102,16 +102,24 @@ def start(Pclass,vit,diff):
               "mana": 50, "maxendurance": 15, "maxmana": 50}
 
     #définir les bonus de classe
-    if Pclass["comp"] == "M":
-        player["mana"] += 50
-        player["maxmana"] += 50
-    if Pclass["comp"] == "A":
-        player["critL"] += 5
-        player["critDam"] += 0.2
-    if Pclass["comp"] == "T":
-        player["def"] += 10
-        player["maxhealth"] += 50
-        player["health"] += 50
+    player["atk"] += Pclass["boost"]["atk"]
+    player["maxatk"] = player["atk"]
+    player["def"] += Pclass["boost"]["def"]
+    player["critL"] += Pclass["boost"]["critL"]
+    player["critDam"] += Pclass["boost"]["critDam"]
+    player["health"] += Pclass["boost"]["health"]
+    player["maxhealth"] = player["health"]
+    player["endurance"] += Pclass["boost"]["endurance"]
+    player["maxendurance"] = player["endurance"]
+    player["mana"] += Pclass["boost"]["mana"]
+    player["maxmana"] = player["mana"]
+    #if Pclass["comp"] == "A":
+    #    player["critL"] += 5
+    #    player["critDam"] += 0.2
+    #if Pclass["comp"] == "T":
+    #    player["def"] += 10
+    #    player["maxhealth"] += 50
+    #    player["health"] += 50
 
 
     # définir la liste des armes disponible dans le jeu (trié par type d'arme, puis chaque arme dans un dictionnaire)
@@ -795,8 +803,6 @@ def start(Pclass,vit,diff):
             event = "C"
         elif 7 < eventP <= 9:
             event = "S"
-        #else:
-            #event = "F"
 
         if event == "M":
             monsterList = wood(diff)
@@ -903,6 +909,7 @@ def start(Pclass,vit,diff):
             A = False
             IR = False
             I = False
+            boostComp = False
             armeR = weaponList[random.randint(0, len(weaponList) - 1)][0]
             itemR = itemsList[random.randint(0,len(itemsList) - 1)]
             while achat != "stop":
@@ -923,6 +930,8 @@ def start(Pclass,vit,diff):
                     print("objet aléatoire : 40 G : IR")
                 if I != True:
                     print("arme :", itemR["name"], "75 G : I")
+                if boostComp == False:
+                    print("amélioration de classe : 250 G : C")
                 print("")
                 print("tapez stop pour sortir")
                 achat = input("que voulez vous acheter ")
@@ -932,6 +941,11 @@ def start(Pclass,vit,diff):
                     inv["armList"].append(armeR)
                     player["gold"] -= 100
                     A = True
+
+                elif achat == "C" and player["gold"] >= 250:
+
+                    player["gold"] -= 250
+                    boostComp = True
 
                 elif achat == "IR" and player["gold"] >= 40:
                     inv["item"].append(itemsList[random.randint(0,len(itemsList) - 1)])
@@ -1068,10 +1082,10 @@ def start(Pclass,vit,diff):
 
 #choix des classes (et application)
 def classChoix(classChoos,vit):
-    classList = [{"name" : "barbare", "desc" : "un fameux guerrier, il gagne de la force quand il est blessé", "comp" : "B"},
-                 {"name" : "assassin", "desc" : "un combattant de l'ombre, certains de ses coup sont dévastateurs", "comp" : "A"},
-                 {"name" : "mage", "desc" : "le magicien du royaume, plus de magie !", "comp" : "M"},
-                 {"name" : "tanker", "desc" : "un chevalier intuable", "comp" : "T"},
+    classList = [{"name" : "barbare", "desc" : "un fameux guerrier, il gagne de la force quand il est blessé", "comp" : "B", "boost" : {"atk" : 10,"def" : 0,"critL" : 0,"critDam" : 0,"health" : 0,"endurance" : 5,"mana" : 0}},
+                 {"name" : "assassin", "desc" : "un combattant de l'ombre, certains de ses coup sont dévastateurs", "comp" : "A", "boost" : {"atk" : 0,"def" : 0,"critL" : 15,"critDam" : 0.5,"health" : 0,"endurance" : 0,"mana" : 0}},
+                 {"name" : "mage", "desc" : "le magicien du royaume, plus de magie !", "comp" : "M", "boost" : {"atk" : 0,"def" : 5,"critL" : 0,"critDam" : 0,"health" : 25,"endurance" : 0,"mana" : 50}},
+                 {"name" : "tanker", "desc" : "un chevalier intuable", "comp" : "T", "boost" : {"atk" : 0,"def" : 15,"critL" : 5,"critDam" : 0,"health" : 50,"endurance" : 0,"mana" : 0}},
                  #comment ça ont peut pas les choisirs... oui c'est vrai mais ça arrive..
                  {"name" : "draco-barbare", "desc" : "il poursuit l'héritage draconique", "comp" : "DM"},
                  {"name" : "draco-assassin", "desc" : "il poursuit l'héritage draconique", "comp" : "DA"},
