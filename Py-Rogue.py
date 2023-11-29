@@ -93,7 +93,11 @@ def start(Pclass,vit,diff):
     la fonction start lance une partie du jeu et... ne renvoie rien
     """
     #si vous avez besoin d'expliquation pour ça je ne peux rien pour vous
-    choose = input("quelle arme voulez vous ? (épée,hache,arc,dague) ")
+
+    if Pclass["comp"] != "M":
+        choose = input("quelle arme voulez vous ? (épée,hache,arc,dague) ")
+    else:
+        choose = False
     print("\n\n\n\n")
 
     # définir les armes de départ et le joueur
@@ -150,6 +154,8 @@ def start(Pclass,vit,diff):
     # équiper l'arme choisi par le joueur
     if choose in Startweapon:
         activeWeapon = Startweapon[choose]
+    elif Pclass["comp"] == "M":
+        activeWeapon = {"name": "baton des arcanes", "dam": 1.1, "critL": 5, "critDam": 1.5,"Sboost" : 1.5}
     else:
         start(Pclass,vit,diff)
 
@@ -280,12 +286,21 @@ def start(Pclass,vit,diff):
                     print("vous n'avez plus assez de mana")
                     fight(monster, player, activeWeapon,vit)
                 # appliquer les dégats du sort et afficher
-                monster["health"] -= spells[launchSp]["trueDam"]
-                print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                if "Sboost" in activeWeapon:
+                    monster["health"] -= spells[launchSp]["trueDam"]*activeWeapon["Sboost"]
+                    print("vous infligez à l'ennemi", spells[launchSp]["trueDam"]*activeWeapon["Sboost"], "dégats !")
+                else:
+                    monster["health"] -= spells[launchSp]["trueDam"]
+                    print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
                 # appliquer les heals du sort
-                player["health"] += spells[launchSp]["auto heal"]
-                if player["health"] > player["maxhealth"]:
-                    player["health"] = player["maxhealth"]
+                if "Sboost" in activeWeapon:
+                    player["health"] += spells[launchSp]["auto heal"]*activeWeapon["Sboost"]
+                    if player["health"] > player["maxhealth"]:
+                        player["health"] = player["maxhealth"]
+                else:
+                    player["health"] += spells[launchSp]["auto heal"]
+                    if player["health"] > player["maxhealth"]:
+                        player["health"] = player["maxhealth"]
                 # consommer le mana
                 player["mana"] -= spells[launchSp]["cost"]
                 if monster["health"] <= 0:
@@ -355,6 +370,12 @@ def start(Pclass,vit,diff):
                 else:
                     print("l'ennemi vous inflige", round(moAt), "dégats !")
                     player["health"] -= round(moAt)
+
+            if "Sboost" in activeWeapon:
+                print("\nvotre objet magique vous restore 7.5 mana\n")
+                player["mana"] += 7.5
+                if player["mana"] > player["maxmana"]:
+                    player["mana"] = player["maxmana"]
 
             # affichage de fin de tour (vie,stat,etc)
             print("votre vie :", player["health"], "-- vie du monstre 1 :", monster["health"])
@@ -595,20 +616,16 @@ def start(Pclass,vit,diff):
                     if player["mana"] < spells[launchSp]["cost"]:
                         print("vous n'avez plus assez de mana")
                         fight2(monsterA, monsterB, player, activeWeapon,vit)
-                    monsterA["health"] -= spells[launchSp]["trueDam"]
-                    print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
-                    player["health"] += spells[launchSp]["auto heal"]
-                    if player["health"] > player["maxhealth"]:
-                        player["health"] = player["maxhealth"]
-
-                    if player["mana"] < spells[launchSp]["cost"]:
-                        print("vous n'avez plus assez de mana")
-                        fight2(monsterA, monsterB, player, activeWeapon,vit)
-                    monsterB["health"] -= spells[launchSp]["trueDam"]
-                    print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
-                    player["health"] += spells[launchSp]["auto heal"]
-                    if player["health"] > player["maxhealth"]:
-                        player["health"] = player["maxhealth"]
+                    if "Sboost" in activeWeapon:
+                        monsterA["health"] -= spells[launchSp]["trueDam"]*activeWeapon["Sboost"]
+                        print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                        monsterB["health"] -= spells[launchSp]["trueDam"]
+                        print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                    else:
+                        monsterA["health"] -= spells[launchSp]["trueDam"] * activeWeapon["Sboost"]
+                        print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                        monsterB["health"] -= spells[launchSp]["trueDam"]
+                        print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
                     player["mana"] -= spells[launchSp]["cost"]
                 #autres sorts (pas de zone)
                 else:
@@ -619,11 +636,18 @@ def start(Pclass,vit,diff):
                         if player["mana"] < spells[launchSp]["cost"]:
                             print("vous n'avez plus assez de mana")
                             fight2(monsterA, monsterB, player, activeWeapon,vit)
-                        monsterA["health"] -= spells[launchSp]["trueDam"]
-                        print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
-                        player["health"] += spells[launchSp]["auto heal"]
-                        if player["health"] > player["maxhealth"]:
-                            player["health"] = player["maxhealth"]
+                        if "Sboost" in activeWeapon:
+                            monsterA["health"] -= spells[launchSp]["trueDam"]*activeWeapon["Sboost"]
+                            print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                            player["health"] += spells[launchSp]["auto heal"]*activeWeapon["Sboost"]
+                            if player["health"] > player["maxhealth"]:
+                                player["health"] = player["maxhealth"]
+                        else:
+                            monsterA["health"] -= spells[launchSp]["trueDam"]
+                            print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                            player["health"] += spells[launchSp]["auto heal"]
+                            if player["health"] > player["maxhealth"]:
+                                player["health"] = player["maxhealth"]
                         player["mana"] -= spells[launchSp]["cost"]
 
                     if vise == 2 and monsterB["health"] >= 0 and "explode" not in activeWeapon:
@@ -631,11 +655,18 @@ def start(Pclass,vit,diff):
                         if player["mana"] < spells[launchSp]["cost"]:
                             print("vous n'avez plus assez de mana")
                             fight2(monsterA, monsterB, player, activeWeapon,vit)
-                        monsterB["health"] -= spells[launchSp]["trueDam"]
-                        print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
-                        player["health"] += spells[launchSp]["auto heal"]
-                        if player["health"] > player["maxhealth"]:
-                            player["health"] = player["maxhealth"]
+                        if "Sboost" in activeWeapon:
+                            monsterB["health"] -= spells[launchSp]["trueDam"]*activeWeapon["Sboost"]
+                            print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                            player["health"] += spells[launchSp]["auto heal"]*activeWeapon["Sboost"]
+                            if player["health"] > player["maxhealth"]:
+                                player["health"] = player["maxhealth"]
+                        else:
+                            monsterB["health"] -= spells[launchSp]["trueDam"]
+                            print("vous infligez à l'ennemi", spells[launchSp]["trueDam"], "dégats !")
+                            player["health"] += spells[launchSp]["auto heal"]
+                            if player["health"] > player["maxhealth"]:
+                                player["health"] = player["maxhealth"]
                         player["mana"] -= spells[launchSp]["cost"]
 
                 if monsterA["health"] <= 0 and monsterB["health"] <= 0:
@@ -720,6 +751,12 @@ def start(Pclass,vit,diff):
                 if monsterB["health"] >= 0:
                     print("l'ennemi vous inflige", round(moAtB), "dégats !")
                     player["health"] -= round(moAtB)
+
+            if "Sboost" in activeWeapon:
+                print("\nvotre objet magique vous restore 7.5 mana\n")
+                player["mana"] += 7.5
+                if player["mana"] > player["maxmana"]:
+                    player["mana"] = player["maxmana"]
 
             #affichages d'état du combat, test de vie du joueur et des monstres
             print("votre vie :", player["health"], "-- vie du monstre 1 :", monsterA["health"], "-- vie du monstre 2 :",
